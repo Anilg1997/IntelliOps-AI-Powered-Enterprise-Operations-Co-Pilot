@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" font-family="'Segoe UI',sans-serif">
+  <rect width="800" height="450" fill="#f5f7fa"/>
+  <rect width="800" height="56" fill="#c62828"/>
+  <text x="20" y="36" fill="white" font-size="18" font-weight="700">⚡ IntelliOps  |  Legacy Billing Adapter</text>
+  <text x="24" y="100" font-size="20" fill="#1a1a2e" font-weight="700">Legacy Billing Integration (Oracle + SOAP)</text>
+  <text x="24" y="124" font-size="13" fill="#666">Simulating enterprise legacy system integration with Oracle DB and SOAP/WSDL</text>
+  <rect x="24" y="145" rx="12" ry="12" width="355" height="120" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <rect x="24" y="145" rx="12" ry="12" width="4" height="120" fill="#c62828"/>
+  <text x="40" y="172" font-size="14" fill="#1a1a2e" font-weight="600">🟢 Order Service (Modern)</text>
+  <text x="40" y="194" font-size="12" fill="#333">Spring Boot 3 + PostgreSQL</text>
+  <text x="40" y="212" font-size="12" fill="#666">REST + GraphQL endpoints</text>
+  <text x="40" y="230" font-size="12" fill="#666">Kafka event publishing</text>
+  <text x="40" y="248" font-size="12" fill="#999">REST / GraphQL / Kafka</text>
+  <rect x="410" y="145" rx="12" ry="12" width="355" height="120" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <rect x="410" y="145" rx="12" ry="12" width="4" height="120" fill="#c62828"/>
+  <text x="426" y="172" font-size="14" fill="#1a1a2e" font-weight="600">🔴 Legacy Billing System</text>
+  <text x="426" y="194" font-size="12" fill="#333">Oracle Database (XE)</text>
+  <text x="426" y="212" font-size="12" fill="#666">SOAP Web Services (Spring-WS)</text>
+  <text x="426" y="230" font-size="12" fill="#666">WSDL contract-based integration</text>
+  <text x="426" y="248" font-size="12" fill="#999">SOAP / Oracle SQL</text>
+  <text x="250" y="210" font-size="24" fill="#666" text-anchor="middle">⟷</text>
+  <rect x="24" y="285" rx="12" ry="12" width="355" height="100" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="40" y="312" font-size="14" fill="#1a1a2e" font-weight="600">MCP Tool Interface</text>
+  <text x="40" y="334" font-size="12" fill="#666">billing-mcp → get_invoice(orderId)</text>
+  <text x="40" y="352" font-size="12" fill="#666">billing-mcp → get_payment_status(orderId)</text>
+  <rect x="410" y="285" rx="12" ry="12" width="355" height="100" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="426" y="312" font-size="14" fill="#1a1a2e" font-weight="600">AI Co-Pilot Integration</text>
+  <text x="426" y="334" font-size="12" fill="#666">Agent calls billing-mcp tools</text>
+  <text x="426" y="352" font-size="12" fill="#666">RAG context on billing FAQs</text>
+  <rect x="24" y="400" rx="8" ry="8" width="740" height="34" fill="#fff8e1" stroke="#ffe082" stroke-width="1"/>
+  <text x="40" y="422" font-size="12" fill="#f57c00">💡 Legacy integration demonstrates real-world enterprise skills — telecom, banking, and insurance all have Oracle/SOAP systems</text>
+</svg>

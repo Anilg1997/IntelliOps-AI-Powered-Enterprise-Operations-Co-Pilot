@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" font-family="'Segoe UI',sans-serif">
+  <rect width="800" height="400" fill="#f5f7fa"/>
+  <rect width="800" height="56" fill="#1a237e"/>
+  <text x="20" y="36" fill="white" font-size="18" font-weight="700">⚡ IntelliOps</text>
+  <text x="24" y="100" font-size="20" fill="#1a1a2e" font-weight="700">Orders</text>
+  <text x="24" y="124" font-size="13" fill="#666">Managing enterprise orders with REST + GraphQL</text>
+  <rect x="24" y="140" rx="8" ry="8" width="750" height="40" fill="#e8eaf6"/>
+  <text x="40" y="165" font-size="13" fill="#283593">3 orders found  |  REST: /api/v1/orders  |  GraphQL: /api/graphql</text>
+  <rect x="24" y="196" rx="8" ry="8" width="750" height="50" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="40" y="216" font-size="14" fill="#1a237e" font-weight="600">ORD-20241225-ABC123</text>
+  <text x="40" y="236" font-size="12" fill="#666">Acme Corp  |  ₹2,499.99  |  Dec 25, 2024</text>
+  <rect x="650" y="208" rx="6" ry="6" width="100" height="24" fill="#fff3e0"/>
+  <text x="700" y="225" font-size="11" fill="#f57c00" text-anchor="middle" font-weight="600">PENDING</text>
+  <rect x="24" y="250" rx="8" ry="8" width="750" height="50" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="40" y="270" font-size="14" fill="#1a237e" font-weight="600">ORD-20241226-DEF456</text>
+  <text x="40" y="290" font-size="12" fill="#666">TechGlobal Inc.  |  ₹5,999.98  |  Dec 26, 2024</text>
+  <rect x="650" y="262" rx="6" ry="6" width="100" height="24" fill="#e8f5e9"/>
+  <text x="700" y="279" font-size="11" fill="#388e3c" text-anchor="middle" font-weight="600">CONFIRMED</text>
+  <rect x="24" y="304" rx="8" ry="8" width="750" height="50" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="40" y="324" font-size="14" fill="#1a237e" font-weight="600">ORD-20241227-GHI789</text>
+  <text x="40" y="344" font-size="12" fill="#666">RetailMax Solutions  |  ₹3,899.99  |  Dec 27, 2024</text>
+  <rect x="635" y="316" rx="6" ry="6" width="115" height="24" fill="#fef2f2"/>
+  <text x="692" y="333" font-size="11" fill="#d32f2f" text-anchor="middle" font-weight="600">ON_HOLD</text>
+  <text x="360" y="380" font-size="11" fill="#999" text-anchor="middle">GraphQL BFF: Fetch order + customer + line items in one query</text>
+</svg>

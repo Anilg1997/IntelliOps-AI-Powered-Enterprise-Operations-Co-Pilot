@@ -1,0 +1,46 @@
+query GetOrder($orderNumber: String!) {
+  order(orderNumber: $orderNumber) {
+    id
+    orderNumber
+    status
+    statusReason
+    totalAmount
+    createdAt
+    updatedAt
+    customer {
+      id
+      name
+      email
+      phoneNumber
+      address
+    }
+    lineItems {
+      id
+      quantity
+      unitPrice
+      subtotal
+      product {
+        id
+        name
+        sku
+        price
+        category
+      }
+    }
+  }
+}
+
+query GetAllOrders {
+  allOrders {
+    id
+    orderNumber
+    status
+    totalAmount
+    createdAt
+    customer {
+      id
+      name
+      email
+    }
+  }
+}

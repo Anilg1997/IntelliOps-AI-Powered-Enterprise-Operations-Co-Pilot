@@ -1,0 +1,45 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: inventory-service
+
+  data:
+    mongodb:
+      uri: mongodb://admin:Mongo%402024@localhost:27017/intellops_inventory?authSource=admin
+      auto-index-creation: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    date-format: yyyy-MM-dd'T'HH:mm:ss
+
+# gRPC server configuration
+grpc:
+  server:
+    port: 9091
+    enable-keep-alive: true
+    keep-alive-time: 30s
+    keep-alive-timeout: 10s
+
+logging:
+  level:
+    com.intellops: DEBUG
+    net.devh.boot.grpc: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  data:
+    mongodb:
+      uri: mongodb://admin:Mongo%402024@localhost:27017/intellops_inventory_test?authSource=admin
+
+grpc:
+  server:
+    port: 0  # random port for tests

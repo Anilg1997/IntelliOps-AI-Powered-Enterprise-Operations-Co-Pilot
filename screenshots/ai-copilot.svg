@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a237e"/><stop offset="100%" stop-color="#283593"/>
+    </linearGradient>
+    <linearGradient id="ai" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#667eea"/><stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="#f5f7fb"/>
+  <rect width="800" height="56" fill="url(#bg)"/>
+  <text x="20" y="36" fill="white" font-size="18" font-weight="700">⚡ IntelliOps  |  AI Co-Pilot</text>
+  <rect x="580" y="16" rx="12" ry="12" width="80" height="24" fill="#4caf50"/>
+  <text x="620" y="33" fill="white" font-size="11" text-anchor="middle">● ONLINE</text>
+  <rect x="250" y="70" rx="12" ry="12" width="540" height="60" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="266" y="96" font-size="13" fill="#333">Why is order #4521 stuck, and has the customer been billed?</text>
+  <text x="266" y="116" font-size="11" fill="#999">User query — Dec 27, 2024 10:30 AM</text>
+  <rect x="10" y="145" rx="12" ry="12" width="780" height="80" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <rect x="10" y="145" rx="12" ry="12" width="4" height="80" fill="url(#ai)"/>
+  <text x="26" y="170" font-size="13" fill="#333" font-weight="600">🤖 Step 1: RAG Retrieval</text>
+  <text x="26" y="190" font-size="12" fill="#666">Retrieved "Order Status Codes Runbook" → status ON_HOLD means stock hold</text>
+  <text x="26" y="208" font-size="12" fill="#666">Retrieved "Inventory Hold Procedures" → recommends notifying customer</text>
+  <rect x="10" y="235" rx="12" ry="12" width="780" height="80" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <rect x="10" y="235" rx="12" ry="12" width="4" height="80" fill="#4caf50"/>
+  <text x="26" y="260" font-size="13" fill="#333" font-weight="600">🔧 Step 2: Tool Calls (MCP)</text>
+  <text x="26" y="280" font-size="12" fill="#666">order-mcp → get_order_status(4521) → ON_HOLD (STOCK_HOLD)</text>
+  <text x="26" y="298" font-size="12" fill="#666">inventory-mcp → check_stock(PROD-001) → 0 units, restock in ~5 days</text>
+  <rect x="10" y="325" rx="12" ry="12" width="780" height="80" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <rect x="10" y="325" rx="12" ry="12" width="4" height="80" fill="#f57c00"/>
+  <text x="26" y="350" font-size="13" fill="#333" font-weight="600">💰 Step 3: Billing Check</text>
+  <text x="26" y="370" font-size="12" fill="#666">billing-mcp → get_invoice(4521) → PENDING (not yet charged)</text>
+  <text x="26" y="388" font-size="12" fill="#666">billing-mcp → get_payment_status(4521) → NO_PAYMENT_FOUND</text>
+  <rect x="10" y="415" rx="12" ry="12" width="780" height="70" fill="url(#ai)"/>
+  <text x="26" y="442" font-size="13" fill="white" font-weight="600">💡 Synthesized Answer</text>
+  <text x="26" y="462" font-size="12" fill="rgba(255,255,255,0.9)">Order #4521 is ON_HOLD due to stock outage (restock in ~5 days). Customer has NOT been billed. Recommended action: notify customer of delay or offer substitute product.</text>
+</svg>

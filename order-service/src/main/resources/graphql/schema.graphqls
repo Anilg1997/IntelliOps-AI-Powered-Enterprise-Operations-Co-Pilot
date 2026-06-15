@@ -1,0 +1,62 @@
+"IntelliOps - Order & Customer GraphQL Schema (BFF layer)"
+"Enables the frontend to fetch an order with customer and line items in a single query."
+
+scalar DateTime
+scalar BigDecimal
+
+type Customer {
+    id: ID!
+    name: String!
+    email: String!
+    phoneNumber: String
+    address: String
+    createdAt: DateTime
+    updatedAt: DateTime
+}
+
+type Product {
+    id: ID!
+    name: String!
+    description: String
+    sku: String!
+    price: BigDecimal!
+    category: String
+    createdAt: DateTime
+}
+
+type OrderLineItem {
+    id: ID!
+    product: Product!
+    quantity: Int!
+    unitPrice: BigDecimal!
+    subtotal: BigDecimal!
+}
+
+type Order {
+    id: ID!
+    orderNumber: String!
+    status: String!
+    statusReason: String
+    totalAmount: BigDecimal!
+    customer: Customer!
+    lineItems: [OrderLineItem!]!
+    createdAt: DateTime
+    updatedAt: DateTime
+}
+
+type Query {
+    "Fetch a single order with full details (customer + line items + product info)"
+    order(orderNumber: String!): Order
+
+    "Fetch orders, optionally filtered by customer ID"
+    orders(customerId: Long): [Order!]!
+
+    "Fetch all orders across all customers"
+    allOrders: [Order!]!
+
+    "Fetch a single customer by ID"
+    customer(id: Long!): Customer
+
+    "Fetch all customers"
+    allCustomers: [Customer!]!
+}

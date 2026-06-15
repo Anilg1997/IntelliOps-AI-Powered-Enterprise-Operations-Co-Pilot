@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package intellops.inventory;
+
+option java_multiple_files = true;
+option java_package = "com.intellops.inventory.grpc";
+option java_outer_classname = "InventoryProto";
+
+// Inventory Stock Service — handles stock checking, reservation, and release
+// Called synchronously by Order Service on the hot path (order confirmation)
+service StockService {
+    // Check if sufficient stock is available for a given SKU and quantity
+    rpc CheckStock (StockCheckRequest) returns (StockCheckResponse);
+
+    // Reserve stock for an order (decrements available quantity)
+    rpc ReserveStock (StockReserveRequest) returns (StockReserveResponse);
+
+    // Release reserved stock when an order is cancelled or fails
+    rpc ReleaseStock (StockReleaseRequest) returns (StockReleaseResponse);
+
+    // Get full stock details for a product
+    rpc GetStockDetails (StockDetailsRequest) returns (StockDetailsResponse);
+}
+
+// ─── Check Stock ───────────────────────────────────────────────────────────
+
+message StockCheckRequest {
+    string sku = 1;
+    int32 quantity = 2;
+}
+
+message StockCheckResponse {
+    bool available = 1;
+    int32 available_quantity = 2;
+    string warehouse_location = 3;
+    string estimated_restock_date = 4; // ISO date string if stock is low/empty
+}
+
+// ─── Reserve Stock ─────────────────────────────────────────────────────────
+
+message StockReserveRequest {
+    string sku = 1;
+    int32 quantity = 2;
+    string order_number = 3;   // which order is reserving
+}
+
+message StockReserveResponse {
+    bool success = 1;
+    string message = 2;
+    int32 remaining_quantity = 3;
+}
+
+// ─── Release Stock ─────────────────────────────────────────────────────────
+
+message StockReleaseRequest {
+    string sku = 1;
+    int32 quantity = 2;
+    string order_number = 3;
+    string reason = 4;         // e.g. "ORDER_CANCELLED", "PAYMENT_FAILED"
+}
+
+message StockReleaseResponse {
+    bool success = 1;
+    string message = 2;
+    int32 available_quantity = 3;
+}
+
+// ─── Stock Details ─────────────────────────────────────────────────────────
+
+message StockDetailsRequest {
+    string sku = 1;
+}
+
+message StockDetailsResponse {
+    string sku = 1;
+    string product_name = 2;
+    int32 total_quantity = 3;
+    int32 reserved_quantity = 4;
+    int32 available_quantity = 5;
+    string warehouse_location = 6;
+    string restock_date = 7;
+    string status = 8;         // IN_STOCK, LOW_STOCK, OUT_OF_STOCK, DISCONTINUED
+}

@@ -1,0 +1,66 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+~*.*
+*.iml
+.idea/
+.settings/
+.project
+.classpath
+*.class
+*.ctxt
+.mtj.tmp/
+.gradle/
+build/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Eclipse
+.settings/
+.project
+.classpath
+*.classpath
+*.project
+
+# VS Code
+.vscode/
+.code-workspace
+*.code-workspace
+
+# Node / Angular
+node_modules/
+dist/
+.tmp/
+*.tgz
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+*.swp
+*.swo
+*~
+.idea/
+*.iml
+.settings/
+.project
+.classpath
