@@ -1,10 +1,10 @@
 FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /build
 COPY pom.xml /build/pom.xml
-COPY billing-service /build/billing-service
-COPY order-service/pom.xml /build/order-service/pom.xml
-COPY inventory-service/pom.xml /build/inventory-service/pom.xml
-COPY ai-copilot-service/pom.xml /build/ai-copilot-service/pom.xml
+COPY backend/billing-service /build/billing-service
+COPY backend/order-service/pom.xml /build/order-service/pom.xml
+COPY backend/inventory-service/pom.xml /build/inventory-service/pom.xml
+COPY backend/ai-copilot-service/pom.xml /build/ai-copilot-service/pom.xml
 RUN apk add --no-cache maven && cd /build && mvn package -pl billing-service -am -DskipTests -q
 
 FROM eclipse-temurin:17-jre-alpine

@@ -31,13 +31,18 @@
 ```
                         ┌─────────────────────────┐
                         │   Angular Frontend       │
-                        │  (Co-pilot chat + admin  │
-                        │   dashboards)            │
+                        │  (Auth + Co-pilot chat   │
+                        │   + admin dashboards)    │
                         └───────────┬──────────────┘
-                                     │ GraphQL (BFF) + REST + SSE/WebSocket
-                                     ▼
+                         JWT Auth  │ GraphQL (BFF) + REST + SSE/WebSocket
+                         (Bearer)  ▼
         ┌─────────────────────────────────────────────────────┐
-        │              AI Co-Pilot Service                     │
+        │              Auth Service (port 8080)                │
+        │   JWT Login/Register · Spring Security · bcrypt      │
+        └────────────────────────┬────────────────────────────┘
+                                 │
+        ┌─────────────────────────────────────────────────────┐
+        │              AI Co-Pilot Service (port 8083)         │
         │   Spring AI + LangChain4j + Ollama (local LLM)       │
         │   - RAG over runbooks/FAQs (pgvector)                │
         │   - Agent w/ tool calling                            │
@@ -47,7 +52,7 @@
                 ▼                ▼               ▼
      ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────────┐
      │ Order Service     │ │ Inventory/Catalog │ │ Legacy Billing       │
-     │ Spring Boot       │ │ Spring Boot       │ │ Adapter Service       │
+     │ (port 8081)       │ │ (port 8082)       │ │ Adapter (port 8084)  │
      │ PostgreSQL        │ │ MongoDB           │ │ Oracle DB             │
      │ REST + GraphQL    │ │ gRPC (internal)   │ │ SOAP (legacy contract)│
      └────────┬──────────┘ └────────┬──────────┘ └───────────┬──────────┘
@@ -58,19 +63,6 @@
      │ Service (Kafka)      │
      └──────────────────────┘
 ```
-
-### Key Design Decisions
-
-| Technology | Why | Tradeoff |
-|-----------|-----|----------|
-| **PostgreSQL** | ACID transactions for orders/payments; relational integrity (line items reference valid orders and products) | Fixed schema less flexible for varying product attributes |
-| **MongoDB** | Product attributes vary wildly by category; document model fits "products with different shapes" naturally | No built-in joins; requires application-level aggregation |
-| **GraphQL (BFF)** | Frontend needs order + customer + line items in one round trip; avoids over-fetching or building custom aggregation endpoints | Additional complexity vs. simple REST; must manage query depth |
-| **gRPC** | Binary protocol + protobuf gives lower latency for the hot-path stock check call between Order Service and Inventory Service | Tight coupling on contract; harder to debug than REST/JSON |
-| **REST** | Industry standard for external/partner APIs; versionable, cacheable | Less efficient than GraphQL for complex nested queries |
-| **Oracle + SOAP** | Simulates a legacy enterprise system — extremely common in real companies (billing/ERP in telecom, banking, insurance) | High licensing cost; heavy protocol; only used here as an adapter pattern |
-| **Kafka** | Decouples Order Service from notification logic; creates an audit trail the AI agent can query later | Operational complexity; at-least-once semantics require idempotent consumers |
-| **Ollama** | Free, runs locally; no order/customer/billing data leaves the network | Smaller models than GPT-4; requires local GPU or sufficient RAM |
 
 ---
 
@@ -98,20 +90,34 @@
 # 1. Build all services
 mvn clean install -DskipTests
 
-# 2. Start infrastructure (PostgreSQL, Kafka, etc.)
-docker-compose up -d postgres kafka
+# 2. Start infrastructure (PostgreSQL, Kafka, MongoDB, etc.)
+docker-compose up -d postgres kafka mongodb
 
-# 3. Start Order Service
-cd order-service
+# 3. Start Auth Service (new terminal)
+cd backend/auth-service
 mvn spring-boot:run
 
-# 4. Start Frontend (new terminal)
+# 4. Start Order Service (new terminal)
+cd backend/order-service
+mvn spring-boot:run
+
+# 5. Start Frontend (new terminal)
 cd frontend/intellops-ui
 npm install
 ng serve
 ```
 
 ### API Endpoints
+
+#### Auth Service (port 8080)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/register` | Register a new user |
+| `POST` | `/api/auth/login` | Login and get JWT token |
+| `GET` | `/api/auth/me` | Get current user profile |
+
+#### Order Service (port 8081)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -149,19 +155,25 @@ query GetOrderWithDetails {
 
 ```
 intellops-platform/
-├── order-service/                 # Order & Customer management (Phase 1)
-│   ├── src/main/java/com/intellops/order/
-│   │   ├── config/               # CORS, GraphQL, Kafka config
-│   │   ├── controller/           # REST controllers
-│   │   ├── dto/                  # Request/Response DTOs
-│   │   ├── entity/               # JPA entities (Customer, Product, Order)
-│   │   ├── exception/            # Global exception handler
-│   │   ├── graphql/              # GraphQL query controllers
-│   │   ├── repository/           # Spring Data JPA repositories
-│   │   └── service/              # Business logic
-│   └── src/main/resources/
-│       ├── db/migration/         # Flyway migrations
-│       └── graphql/              # GraphQL schema
+├── backend/
+│   ├── auth-service/              # User auth & JWT (registration, login)
+│   ├── order-service/             # Order & Customer management (Phase 1)
+│   │   ├── src/main/java/com/intellops/order/
+│   │   │   ├── config/           # CORS, GraphQL, Kafka config
+│   │   │   ├── controller/       # REST controllers
+│   │   │   ├── dto/              # Request/Response DTOs
+│   │   │   ├── entity/           # JPA entities (Customer, Product, Order)
+│   │   │   ├── exception/        # Global exception handler
+│   │   │   ├── graphql/          # GraphQL query controllers
+│   │   │   ├── repository/       # Spring Data JPA repositories
+│   │   │   └── service/          # Business logic
+│   │   └── src/main/resources/
+│   │       ├── db/migration/     # Flyway migrations
+│   │       └── graphql/          # GraphQL schema
+│   ├── inventory-service/         # Inventory & Catalog (MongoDB + gRPC) (Phase 2)
+│   ├── ai-copilot-service/        # AI Co-Pilot with Ollama + RAG (Phase 3)
+│   ├── billing-service/           # Legacy Billing adapter (Oracle + SOAP) (Phase 4)
+│   └── proto/                     # Shared protobuf definitions
 ├── frontend/
 │   └── intellops-ui/             # Angular 17 SPA
 ├── docs/
@@ -179,10 +191,12 @@ intellops-platform/
 | Layer | Technology |
 |-------|-----------|
 | **Backend** | Java 17, Spring Boot 3.2, Spring Data JPA |
+| **Auth** | Spring Security, JWT (jjwt), bcrypt |
 | **API (External)** | REST (versionable, cacheable) |
 | **API (BFF)** | GraphQL (single-round-trip queries) |
 | **API (Internal)** | gRPC (low-latency service-to-service) |
 | **Legacy API** | SOAP (Oracle adapter simulation) |
+| **Database (Auth)** | PostgreSQL 16 |
 | **Database (Orders)** | PostgreSQL 16 (ACID, relational) |
 | **Database (Catalog)** | MongoDB 7 (flexible schema) |
 | **Database (Legacy)** | Oracle XE (simulated legacy) |
@@ -200,9 +214,10 @@ intellops-platform/
 
 | Phase | Status | Description |
 |-------|--------|-------------|
+| **Auth** | ✅ Complete | User registration & login with JWT, Spring Security |
 | **Phase 1** | ✅ Complete | Order Service (REST + GraphQL + PostgreSQL + Kafka), Angular skeleton, CI |
-| **Phase 2** | ✅ Complete | Inventory Service (MongoDB + gRPC), product catalog, stock management, integration with Order Service |
-| **Phase 3** | ✅ Complete | AI Co-Pilot core: LangChain4j + Ollama, RAG over pgvector, MCP tools for Order/Inventory, SSE streaming chat UI |
+| **Phase 2** | ✅ Complete | Inventory Service (MongoDB + gRPC), product catalog, stock management |
+| **Phase 3** | ✅ Complete | AI Co-Pilot: LangChain4j + Ollama, RAG over pgvector, MCP tools, SSE chat |
 | **Phase 4** | ✅ Complete | Legacy Billing adapter (Oracle + SOAP), Kafka event pipeline |
 | **Phase 5** | 📋 Planned | Full agent orchestration, conversation memory, dashboards |
 | **Phase 6** | 📋 Planned | Dockerization, AWS deploy, polish docs & demo video |

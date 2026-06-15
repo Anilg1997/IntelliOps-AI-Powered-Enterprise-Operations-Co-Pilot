@@ -51,7 +51,7 @@ import { OrderService, Order } from '../../services/order.service';
           <tbody>
             <tr *ngFor="let order of orders">
               <td class="order-number">{{ order.orderNumber }}</td>
-              <td>{{ order.customer?.name || 'N/A' }}</td>
+              <td>{{ order.customer.name || 'N/A' }}</td>
               <td>
                 <span class="status-badge" [class]="order.status.toLowerCase()">
                   {{ order.status }}

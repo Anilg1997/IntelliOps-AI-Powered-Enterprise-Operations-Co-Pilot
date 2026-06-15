@@ -1,18 +1,30 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/orders', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  {
+    path: 'login',
+    loadComponent: () => import('./components/auth/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./components/auth/register.component').then(m => m.RegisterComponent)
+  },
   {
     path: 'orders',
+    canActivate: [authGuard],
     loadComponent: () => import('./components/order-list/order-list.component').then(m => m.OrderListComponent)
   },
   {
     path: 'orders/:orderNumber',
+    canActivate: [authGuard],
     loadComponent: () => import('./components/order-detail/order-detail.component').then(m => m.OrderDetailComponent)
   },
   {
     path: 'copilot',
+    canActivate: [authGuard],
     loadComponent: () => import('./components/chat/chat.component').then(m => m.ChatComponent)
   },
-  { path: '**', redirectTo: '/orders' }
+  { path: '**', redirectTo: '/login' }
 ];

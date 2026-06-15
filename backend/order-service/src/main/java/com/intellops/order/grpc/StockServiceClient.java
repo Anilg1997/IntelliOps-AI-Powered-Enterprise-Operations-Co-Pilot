@@ -2,6 +2,7 @@ package com.intellops.order.grpc;
 
 import com.intellops.inventory.grpc.*;
 import io.grpc.StatusRuntimeException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Component;

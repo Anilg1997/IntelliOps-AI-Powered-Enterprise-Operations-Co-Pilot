@@ -44,7 +44,7 @@ jobs:
 
       - name: Build and test order-service
         run: |
-          cd order-service
+          cd backend/order-service
           mvn clean verify -Dspring.profiles.active=test -DskipTests=false
 
       - name: Build entire platform

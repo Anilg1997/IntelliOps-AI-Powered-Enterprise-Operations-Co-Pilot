@@ -20,10 +20,11 @@
     <description>AI-Powered Enterprise Operations Co-Pilot</description>
 
     <modules>
-        <module>order-service</module>
-        <module>inventory-service</module>
-        <module>ai-copilot-service</module>
-        <module>billing-service</module>
+        <module>backend/auth-service</module>
+        <module>backend/order-service</module>
+        <module>backend/inventory-service</module>
+        <module>backend/ai-copilot-service</module>
+        <module>backend/billing-service</module>
     </modules>
 
     <properties>

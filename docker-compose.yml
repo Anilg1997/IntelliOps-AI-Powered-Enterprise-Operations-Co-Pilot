@@ -67,9 +67,25 @@ services:
       - mongo-data:/data/db
       - ./infra/mongodb/init.js:/docker-entrypoint-initdb.d/init.js:ro
 
+  auth-service:
+    build:
+      context: ./backend/auth-service
+      dockerfile: ../Dockerfile.auth
+    container_name: intellops-auth
+    depends_on:
+      postgres:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/intellops_auth
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+
   inventory-service:
     build:
-      context: ./inventory-service
+      context: ./backend/inventory-service
       dockerfile: ../Dockerfile.inventory
     container_name: intellops-inventory
     depends_on:
@@ -121,7 +137,7 @@ services:
 
   billing-service:
     build:
-      context: ./billing-service
+      context: ./backend/billing-service
       dockerfile: ../Dockerfile.billing
     container_name: intellops-billing
     depends_on:
