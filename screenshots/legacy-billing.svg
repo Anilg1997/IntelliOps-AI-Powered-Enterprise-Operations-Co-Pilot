@@ -1,32 +1,89 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" font-family="'Segoe UI',sans-serif">
-  <rect width="800" height="450" fill="#f5f7fa"/>
-  <rect width="800" height="56" fill="#c62828"/>
-  <text x="20" y="36" fill="white" font-size="18" font-weight="700">⚡ IntelliOps  |  Legacy Billing Adapter</text>
-  <text x="24" y="100" font-size="20" fill="#1a1a2e" font-weight="700">Legacy Billing Integration (Oracle + SOAP)</text>
-  <text x="24" y="124" font-size="13" fill="#666">Simulating enterprise legacy system integration with Oracle DB and SOAP/WSDL</text>
-  <rect x="24" y="145" rx="12" ry="12" width="355" height="120" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <rect x="24" y="145" rx="12" ry="12" width="4" height="120" fill="#c62828"/>
-  <text x="40" y="172" font-size="14" fill="#1a1a2e" font-weight="600">🟢 Order Service (Modern)</text>
-  <text x="40" y="194" font-size="12" fill="#333">Spring Boot 3 + PostgreSQL</text>
-  <text x="40" y="212" font-size="12" fill="#666">REST + GraphQL endpoints</text>
-  <text x="40" y="230" font-size="12" fill="#666">Kafka event publishing</text>
-  <text x="40" y="248" font-size="12" fill="#999">REST / GraphQL / Kafka</text>
-  <rect x="410" y="145" rx="12" ry="12" width="355" height="120" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <rect x="410" y="145" rx="12" ry="12" width="4" height="120" fill="#c62828"/>
-  <text x="426" y="172" font-size="14" fill="#1a1a2e" font-weight="600">🔴 Legacy Billing System</text>
-  <text x="426" y="194" font-size="12" fill="#333">Oracle Database (XE)</text>
-  <text x="426" y="212" font-size="12" fill="#666">SOAP Web Services (Spring-WS)</text>
-  <text x="426" y="230" font-size="12" fill="#666">WSDL contract-based integration</text>
-  <text x="426" y="248" font-size="12" fill="#999">SOAP / Oracle SQL</text>
-  <text x="250" y="210" font-size="24" fill="#666" text-anchor="middle">⟷</text>
-  <rect x="24" y="285" rx="12" ry="12" width="355" height="100" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <text x="40" y="312" font-size="14" fill="#1a1a2e" font-weight="600">MCP Tool Interface</text>
-  <text x="40" y="334" font-size="12" fill="#666">billing-mcp → get_invoice(orderId)</text>
-  <text x="40" y="352" font-size="12" fill="#666">billing-mcp → get_payment_status(orderId)</text>
-  <rect x="410" y="285" rx="12" ry="12" width="355" height="100" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <text x="426" y="312" font-size="14" fill="#1a1a2e" font-weight="600">AI Co-Pilot Integration</text>
-  <text x="426" y="334" font-size="12" fill="#666">Agent calls billing-mcp tools</text>
-  <text x="426" y="352" font-size="12" fill="#666">RAG context on billing FAQs</text>
-  <rect x="24" y="400" rx="8" ry="8" width="740" height="34" fill="#fff8e1" stroke="#ffe082" stroke-width="1"/>
-  <text x="40" y="422" font-size="12" fill="#f57c00">💡 Legacy integration demonstrates real-world enterprise skills — telecom, banking, and insurance all have Oracle/SOAP systems</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" font-family="'Segoe UI', -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="nav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e"/><stop offset="100%" style="stop-color:#283593"/>
+    </linearGradient>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/><stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/></filter>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f7fa"/>
+  <!-- Navbar -->
+  <rect width="1280" height="56" fill="url(#nav)"/>
+  <text x="24" y="36" font-size="20" font-weight="700" fill="white">⚡ IntelliOps</text>
+  <text x="200" y="36" font-size="14" fill="rgba(255,255,255,0.8)">Orders</text>
+  <text x="290" y="36" font-size="14" fill="rgba(255,255,255,0.8)">AI Co-Pilot</text>
+  <circle cx="1180" cy="28" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="1180" y="33" text-anchor="middle" font-size="12" font-weight="600" fill="white">J</text>
+  <!-- Header -->
+  <text x="32" y="96" font-size="24" font-weight="700" fill="#1a1a2e">Legacy Billing Integration</text>
+  <text x="32" y="118" font-size="13" fill="#888">Oracle + SOAP Billing Adapter — Invoice &amp; Payment Management</text>
+  <!-- Stats -->
+  <rect x="32" y="140" width="290" height="110" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="52" y="180" font-size="28" font-weight="700" fill="#1a237e">342</text><text x="52" y="202" font-size="12" fill="#666">Total Invoices</text>
+  <text x="280" y="180" font-size="24">📄</text>
+  <rect x="338" y="140" width="290" height="110" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="358" y="180" font-size="28" font-weight="700" fill="#2e7d32">₹8.7M</text><text x="358" y="202" font-size="12" fill="#666">Total Collected</text>
+  <text x="586" y="180" font-size="24">💰</text>
+  <rect x="644" y="140" width="290" height="110" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="664" y="180" font-size="28" font-weight="700" fill="#d32f2f">12</text><text x="664" y="202" font-size="12" fill="#666">Pending Payments</text>
+  <text x="892" y="180" font-size="24">⏳</text>
+  <rect x="950" y="140" width="300" height="110" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="970" y="180" font-size="28" font-weight="700" fill="#1976d2">98%</text><text x="970" y="202" font-size="12" fill="#666">Payment Success Rate</text>
+  <text x="1208" y="180" font-size="24">✅</text>
+  <!-- Billing Table -->
+  <rect x="32" y="270" width="780" height="430" rx="12" fill="white" filter="url(#shadow)"/>
+  <text x="52" y="302" font-size="16" font-weight="600" fill="#333">Recent Invoices</text>
+  <rect x="52" y="320" width="740" height="34" rx="6" fill="#f8f9fc"/>
+  <text x="68" y="343" font-size="11" font-weight="600" fill="#888">INVOICE #</text><text x="220" y="343" font-size="11" font-weight="600" fill="#888">CUSTOMER</text>
+  <text x="400" y="343" font-size="11" font-weight="600" fill="#888">AMOUNT</text><text x="520" y="343" font-size="11" font-weight="600" fill="#888">STATUS</text>
+  <text x="660" y="343" font-size="11" font-weight="600" fill="#888">DATE</text>
+  <line x1="52" y1="370" x2="792" y2="370" stroke="#f0f0f0"/>
+  <text x="68" y="394" font-size="13" font-weight="600" fill="#1a237e">INV-2025-001</text>
+  <text x="220" y="394" font-size="13" fill="#333">Acme Corporation</text>
+  <text x="400" y="394" font-size="13" font-weight="600" fill="#333">₹1,24,500</text>
+  <rect x="520" y="382" width="100" height="22" rx="10" fill="#e8f5e9"/>
+  <text x="570" y="398" text-anchor="middle" font-size="11" font-weight="600" fill="#2e7d32">PAID</text>
+  <text x="660" y="394" font-size="12" fill="#888">Jan 20, 2025</text>
+  <line x1="52" y1="410" x2="792" y2="410" stroke="#f0f0f0"/>
+  <text x="68" y="434" font-size="13" font-weight="600" fill="#1a237e">INV-2025-002</text>
+  <text x="220" y="434" font-size="13" fill="#333">TechStart Inc</text>
+  <text x="400" y="434" font-size="13" font-weight="600" fill="#333">₹67,800</text>
+  <rect x="520" y="422" width="100" height="22" rx="10" fill="#fff3e0"/>
+  <text x="570" y="438" text-anchor="middle" font-size="11" font-weight="600" fill="#f57c00">PENDING</text>
+  <text x="660" y="434" font-size="12" fill="#888">Jan 18, 2025</text>
+  <line x1="52" y1="450" x2="792" y2="450" stroke="#f0f0f0"/>
+  <text x="68" y="474" font-size="13" font-weight="600" fill="#1a237e">INV-2025-003</text>
+  <text x="220" y="474" font-size="13" fill="#333">GlobalRetail Co</text>
+  <text x="400" y="474" font-size="13" font-weight="600" fill="#333">₹2,50,000</text>
+  <rect x="520" y="462" width="100" height="22" rx="10" fill="#fef2f2"/>
+  <text x="570" y="478" text-anchor="middle" font-size="11" font-weight="600" fill="#d32f2f">OVERDUE</text>
+  <text x="660" y="474" font-size="12" fill="#888">Jan 15, 2025</text>
+  <!-- Legacy Integration Card -->
+  <rect x="832" y="270" width="420" height="210" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="832" y="270" width="8" height="210" rx="4" fill="#ff6b6b"/>
+  <text x="860" y="305" font-size="16" font-weight="600" fill="#333">🔄 Legacy Integration Status</text>
+  <rect x="860" y="320" width="370" height="36" rx="8" fill="#f8f9fc"/>
+  <circle cx="880" cy="338" r="5" fill="#4caf50"/>
+  <text x="895" y="343" font-size="13" fill="#333">Oracle Database</text>
+  <text x="1180" y="343" font-size="12" fill="#4caf50" font-weight="600">Connected</text>
+  <rect x="860" y="364" width="370" height="36" rx="8" fill="#f8f9fc"/>
+  <circle cx="880" cy="382" r="5" fill="#4caf50"/>
+  <text x="895" y="387" font-size="13" fill="#333">SOAP Web Service</text>
+  <text x="1180" y="387" font-size="12" fill="#4caf50" font-weight="600">Active</text>
+  <rect x="860" y="408" width="370" height="36" rx="8" fill="#f8f9fc"/>
+  <circle cx="880" cy="426" r="5" fill="#4caf50"/>
+  <text x="895" y="431" font-size="13" fill="#333">Kafka Event Pipeline</text>
+  <text x="1180" y="431" font-size="12" fill="#4caf50" font-weight="600">Streaming</text>
+  <!-- Payment Timeline -->
+  <rect x="832" y="495" width="420" height="205" rx="12" fill="white" filter="url(#shadow)"/>
+  <text x="852" y="528" font-size="16" font-weight="600" fill="#333">📊 Payment Timeline</text>
+  <line x1="870" y1="550" x2="870" y2="680" stroke="#e0e0e0" stroke-width="2"/>
+  <circle cx="870" cy="560" r="7" fill="#4caf50"/>
+  <text x="895" y="565" font-size="13" fill="#555">Jan 20 — Payment received from Acme Corp</text>
+  <circle cx="870" cy="600" r="7" fill="#ff9800"/>
+  <text x="895" y="605" font-size="13" fill="#555">Jan 18 — Invoice generated for TechStart</text>
+  <circle cx="870" cy="640" r="7" fill="#f44336"/>
+  <text x="895" y="645" font-size="13" fill="#555">Jan 15 — Payment overdue for GlobalRetail</text>
 </svg>

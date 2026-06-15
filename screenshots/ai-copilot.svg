@@ -1,36 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Segoe UI',sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" font-family="'Segoe UI', -apple-system, sans-serif">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1a237e"/><stop offset="100%" stop-color="#283593"/>
+    <linearGradient id="nav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e"/><stop offset="100%" style="stop-color:#283593"/>
     </linearGradient>
-    <linearGradient id="ai" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#667eea"/><stop offset="100%" stop-color="#764ba2"/>
+    <linearGradient id="chatHeader" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/><stop offset="100%" style="stop-color:#764ba2"/>
     </linearGradient>
+    <linearGradient id="userMsg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/><stop offset="100%" style="stop-color:#5a6fd6"/>
+    </linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/></filter>
   </defs>
-  <rect width="800" height="500" fill="#f5f7fb"/>
-  <rect width="800" height="56" fill="url(#bg)"/>
-  <text x="20" y="36" fill="white" font-size="18" font-weight="700">⚡ IntelliOps  |  AI Co-Pilot</text>
-  <rect x="580" y="16" rx="12" ry="12" width="80" height="24" fill="#4caf50"/>
-  <text x="620" y="33" fill="white" font-size="11" text-anchor="middle">● ONLINE</text>
-  <rect x="250" y="70" rx="12" ry="12" width="540" height="60" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <text x="266" y="96" font-size="13" fill="#333">Why is order #4521 stuck, and has the customer been billed?</text>
-  <text x="266" y="116" font-size="11" fill="#999">User query — Dec 27, 2024 10:30 AM</text>
-  <rect x="10" y="145" rx="12" ry="12" width="780" height="80" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <rect x="10" y="145" rx="12" ry="12" width="4" height="80" fill="url(#ai)"/>
-  <text x="26" y="170" font-size="13" fill="#333" font-weight="600">🤖 Step 1: RAG Retrieval</text>
-  <text x="26" y="190" font-size="12" fill="#666">Retrieved "Order Status Codes Runbook" → status ON_HOLD means stock hold</text>
-  <text x="26" y="208" font-size="12" fill="#666">Retrieved "Inventory Hold Procedures" → recommends notifying customer</text>
-  <rect x="10" y="235" rx="12" ry="12" width="780" height="80" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <rect x="10" y="235" rx="12" ry="12" width="4" height="80" fill="#4caf50"/>
-  <text x="26" y="260" font-size="13" fill="#333" font-weight="600">🔧 Step 2: Tool Calls (MCP)</text>
-  <text x="26" y="280" font-size="12" fill="#666">order-mcp → get_order_status(4521) → ON_HOLD (STOCK_HOLD)</text>
-  <text x="26" y="298" font-size="12" fill="#666">inventory-mcp → check_stock(PROD-001) → 0 units, restock in ~5 days</text>
-  <rect x="10" y="325" rx="12" ry="12" width="780" height="80" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <rect x="10" y="325" rx="12" ry="12" width="4" height="80" fill="#f57c00"/>
-  <text x="26" y="350" font-size="13" fill="#333" font-weight="600">💰 Step 3: Billing Check</text>
-  <text x="26" y="370" font-size="12" fill="#666">billing-mcp → get_invoice(4521) → PENDING (not yet charged)</text>
-  <text x="26" y="388" font-size="12" fill="#666">billing-mcp → get_payment_status(4521) → NO_PAYMENT_FOUND</text>
-  <rect x="10" y="415" rx="12" ry="12" width="780" height="70" fill="url(#ai)"/>
-  <text x="26" y="442" font-size="13" fill="white" font-weight="600">💡 Synthesized Answer</text>
-  <text x="26" y="462" font-size="12" fill="rgba(255,255,255,0.9)">Order #4521 is ON_HOLD due to stock outage (restock in ~5 days). Customer has NOT been billed. Recommended action: notify customer of delay or offer substitute product.</text>
+  <rect width="1280" height="720" fill="#f5f7fa"/>
+  <!-- Navbar -->
+  <rect width="1280" height="56" fill="url(#nav)"/>
+  <text x="24" y="36" font-size="20" font-weight="700" fill="white">⚡ IntelliOps</text>
+  <text x="200" y="36" font-size="14" fill="rgba(255,255,255,0.8)">Orders</text>
+  <text x="290" y="36" font-size="14" fill="white" font-weight="600">AI Co-Pilot</text>
+  <circle cx="1180" cy="28" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="1180" y="33" text-anchor="middle" font-size="12" font-weight="600" fill="white">J</text>
+  <!-- Chat Container -->
+  <rect x="190" y="56" width="900" height="664" fill="white"/>
+  <!-- Chat Header -->
+  <rect x="190" y="56" width="900" height="64" fill="url(#chatHeader)"/>
+  <text x="220" y="92" font-size="20">🤖</text>
+  <text x="260" y="86" font-size="18" font-weight="600" fill="white">AI Co-Pilot</text>
+  <text x="260" y="104" font-size="12" fill="rgba(255,255,255,0.85)">Enterprise Operations Assistant</text>
+  <rect x="960" y="72" width="110" height="30" rx="14" fill="rgba(255,255,255,0.2)"/>
+  <circle cx="975" cy="87" r="4" fill="#4caf50"/>
+  <text x="985" y="92" font-size="11" fill="white">Connected</text>
+  <!-- Welcome Message -->
+  <text x="640" y="160" text-anchor="middle" font-size="48">🤖</text>
+  <text x="640" y="200" text-anchor="middle" font-size="20" font-weight="600" fill="#333">Welcome to IntelliOps Co-Pilot</text>
+  <text x="640" y="222" text-anchor="middle" font-size="13" fill="#888">Ask me anything about orders, inventory, or troubleshooting.</text>
+  <rect x="290" y="250" width="200" height="34" rx="18" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="390" y="272" text-anchor="middle" font-size="12" fill="#555">🔍 Check order status</text>
+  <rect x="505" y="250" width="180" height="34" rx="18" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="595" y="272" text-anchor="middle" font-size="12" fill="#555">📦 Low stock items</text>
+  <rect x="700" y="250" width="180" height="34" rx="18" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="790" y="272" text-anchor="middle" font-size="12" fill="#555">📊 Order stats</text>
+  <!-- User Message -->
+  <rect x="490" y="310" width="570" rx="12" fill="url(#userMsg)"/>
+  <text x="510" y="335" font-size="14" fill="white">Why is order #4521 stuck, and has the customer been billed?</text>
+  <!-- AI Response -->
+  <rect x="220" y="370" width="640" rx="12" fill="white" stroke="#e8e8e8" stroke-width="1"/>
+  <text x="240" y="395" font-size="14" fill="#333" font-weight="500">🔍 Investigating Order #4521...</text>
+  <text x="240" y="420" font-size="13" fill="#555">• </text>
+  <text x="256" y="420" font-size="13" font-weight="600" fill="#1a237e">Order Status:</text>
+  <text x="340" y="420" font-size="13" fill="#555"> ON_HOLD — Reason: STOCK_HOLD</text>
+  <text x="240" y="442" font-size="13" fill="#555">• </text>
+  <text x="256" y="442" font-size="13" font-weight="600" fill="#1a237e">Inventory:</text>
+  <text x="330" y="442" font-size="13" fill="#555"> SSL-WILD-1Y out of stock. Restock ETA: 5 days</text>
+  <text x="240" y="464" font-size="13" fill="#555">• </text>
+  <text x="256" y="464" font-size="13" font-weight="600" fill="#1a237e">Billing:</text>
+  <text x="310" y="464" font-size="13" fill="#555"> Invoice #INV-4521 is PENDING — customer has </text>
+  <text x="240" y="484" font-size="13" fill="#555" font-weight="600" fill="#d32f2f">NOT been charged</text>
+  <text x="240" y="510" font-size="14" font-weight="600" fill="#1a237e">✅ Recommended Action:</text>
+  <text x="240" y="530" font-size="13" fill="#555">Notify customer of delay. Consider splitting order — ship in-stock items first.</text>
+  <!-- Input Area -->
+  <rect x="190" y="670" width="900" height="50" fill="white" stroke="#eee" stroke-width="1"/>
+  <rect x="210" y="678" width="820" height="34" rx="8" fill="#f8f9fc" stroke="#ddd" stroke-width="1"/>
+  <text x="226" y="700" font-size="13" fill="#999">Ask about orders, inventory, or troubleshooting...</text>
+  <rect x="1050" y="676" width="36" height="36" rx="8" fill="url(#chatHeader)"/>
+  <text x="1068" y="700" text-anchor="middle" font-size="18" fill="white">➡️</text>
 </svg>

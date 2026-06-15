@@ -1,36 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Segoe UI',sans-serif">
-  <rect width="800" height="500" fill="#f5f7fa"/>
-  <rect width="800" height="56" fill="#1a237e"/>
-  <text x="20" y="36" fill="white" font-size="18" font-weight="700">⚡ IntelliOps</text>
-  <text x="24" y="90" font-size="14" fill="#7c4dff">← Back to Orders</text>
-  <text x="24" y="116" font-size="22" fill="#1a1a2e" font-weight="700">ORD-20241225-ABC123</text>
-  <rect x="240" y="106" rx="6" ry="6" width="80" height="22" fill="#fff3e0"/>
-  <text x="280" y="121" font-size="11" fill="#f57c00" text-anchor="middle" font-weight="600">PENDING</text>
-  <text x="680" y="116" font-size="12" fill="#666" text-anchor="end">Total:</text>
-  <text x="680" y="136" font-size="24" fill="#1a237e" font-weight="700" text-anchor="end">₹2,499.99</text>
-  <rect x="24" y="156" rx="8" ry="8" width="360" height="120" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <text x="40" y="182" font-size="14" fill="#1a1a2e" font-weight="600">Customer</text>
-  <text x="40" y="206" font-size="14" fill="#333" font-weight="500">Acme Corp</text>
-  <text x="40" y="226" font-size="12" fill="#666">📧 admin@acmecorp.com</text>
-  <text x="40" y="246" font-size="12" fill="#666">📞 +1-555-0100</text>
-  <rect x="400" y="156" rx="8" ry="8" width="370" height="120" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <text x="416" y="182" font-size="14" fill="#1a1a2e" font-weight="600">Timeline</text>
-  <text x="416" y="206" font-size="12" fill="#333">Created: Dec 25, 2024, 10:30:00 AM</text>
-  <text x="416" y="226" font-size="12" fill="#333">Updated: Dec 25, 2024, 10:30:00 AM</text>
-  <text x="416" y="246" font-size="12" fill="#666">Source: GraphQL BFF (single query)</text>
-  <rect x="24" y="290" rx="8" ry="8" width="746" height="180" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
-  <text x="40" y="318" font-size="14" fill="#1a1a2e" font-weight="600">Line Items</text>
-  <text x="40" y="342" font-size="11" fill="#666">Product</text>
-  <text x="220" y="342" font-size="11" fill="#666">SKU</text>
-  <text x="340" y="342" font-size="11" fill="#666">Qty</text>
-  <text x="440" y="342" font-size="11" fill="#666">Unit Price</text>
-  <text x="560" y="342" font-size="11" fill="#666">Subtotal</text>
-  <line x1="40" y1="352" x2="750" y2="352" stroke="#f0f0f0" stroke-width="1"/>
-  <text x="40" y="376" font-size="13" fill="#333">Enterprise Server Rack</text>
-  <text x="220" y="376" font-size="13" fill="#666">SRV-RACK-42U</text>
-  <text x="340" y="376" font-size="13" fill="#333">1</text>
-  <text x="440" y="376" font-size="13" fill="#333">₹2,499.99</text>
-  <text x="560" y="376" font-size="13" fill="#333" font-weight="600">₹2,499.99</text>
-  <line x1="40" y1="400" x2="750" y2="400" stroke="#f0f0f0" stroke-width="1"/>
-  <text x="40" y="424" font-size="12" fill="#999">Endpoints: REST /api/v1/orders/ORD-20241225-ABC123  |  GraphQL query order(orderNumber: \"ORD-20241225-ABC123\")</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" font-family="'Segoe UI', -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="nav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e"/><stop offset="100%" style="stop-color:#283593"/>
+    </linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/></filter>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f7fa"/>
+  <!-- Navbar -->
+  <rect width="1280" height="56" fill="url(#nav)"/>
+  <text x="24" y="36" font-size="20" font-weight="700" fill="white">⚡ IntelliOps</text>
+  <text x="200" y="36" font-size="14" fill="rgba(255,255,255,0.8)">Orders</text>
+  <text x="290" y="36" font-size="14" fill="rgba(255,255,255,0.8)">AI Co-Pilot</text>
+  <circle cx="1180" cy="28" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="1180" y="33" text-anchor="middle" font-size="12" font-weight="600" fill="white">J</text>
+  <!-- Back link -->
+  <text x="32" y="88" font-size="14" fill="#7c4dff" font-weight="500">← Back to Orders</text>
+  <!-- Header -->
+  <text x="32" y="128" font-size="22" font-weight="700" fill="#1a1a2e">ORD-20250101-A1B2</text>
+  <rect x="240" y="115" width="90" height="22" rx="10" fill="#e8f5e9"/>
+  <text x="285" y="131" text-anchor="middle" font-size="11" font-weight="600" fill="#2e7d32">DELIVERED</text>
+  <text x="350" y="131" font-size="13" fill="#666">— Order completed successfully</text>
+  <text x="1100" y="128" font-size="12" fill="#666">Total Amount</text>
+  <text x="1100" y="152" font-size="28" font-weight="700" fill="#1a237e">₹1,24,500</text>
+  <!-- Customer + Timeline cards -->
+  <rect x="32" y="180" width="500" height="150" rx="12" fill="white" filter="url(#shadow)"/>
+  <text x="52" y="210" font-size="14" font-weight="600" fill="#333">👤 Customer</text>
+  <text x="52" y="238" font-size="16" font-weight="600" fill="#1a1a2e">Acme Corporation</text>
+  <text x="52" y="260" font-size="13" fill="#555">📧 contact@acmecorp.com</text>
+  <text x="52" y="280" font-size="13" fill="#555">📞 +1-555-0123</text>
+  <text x="52" y="300" font-size="13" fill="#555">📍 123 Business Ave, New York, NY</text>
+  <rect x="552" y="180" width="320" height="150" rx="12" fill="white" filter="url(#shadow)"/>
+  <text x="572" y="210" font-size="14" font-weight="600" fill="#333">📅 Timeline</text>
+  <text x="572" y="238" font-size="13" fill="#555"><tspan font-weight="600" fill="#999">Created:</tspan> Jan 15, 2025, 10:30 AM</text>
+  <text x="572" y="260" font-size="13" fill="#555"><tspan font-weight="600" fill="#999">Confirmed:</tspan> Jan 15, 2025, 10:32 AM</text>
+  <text x="572" y="282" font-size="13" fill="#555"><tspan font-weight="600" fill="#999">Shipped:</tspan> Jan 16, 2025, 2:15 PM</text>
+  <text x="572" y="304" font-size="13" fill="#555"><tspan font-weight="600" fill="#999">Delivered:</tspan> Jan 20, 2025, 11:00 AM</text>
+  <!-- Line Items -->
+  <rect x="32" y="350" width="1218" height="350" rx="12" fill="white" filter="url(#shadow)"/>
+  <text x="52" y="382" font-size="14" font-weight="600" fill="#333">📋 Line Items (3)</text>
+  <rect x="52" y="400" width="1178" height="34" rx="6" fill="#f8f9fc"/>
+  <text x="68" y="423" font-size="11" font-weight="600" fill="#888">PRODUCT</text><text x="320" y="423" font-size="11" font-weight="600" fill="#888">SKU</text>
+  <text x="480" y="423" font-size="11" font-weight="600" fill="#888">CATEGORY</text><text x="640" y="423" font-size="11" font-weight="600" fill="#888">QTY</text>
+  <text x="740" y="423" font-size="11" font-weight="600" fill="#888">UNIT PRICE</text><text x="920" y="423" font-size="11" font-weight="600" fill="#888">SUBTOTAL</text>
+  <line x1="52" y1="450" x2="1230" y2="450" stroke="#f0f0f0"/>
+  <text x="68" y="474" font-size="13" font-weight="500" fill="#333">Enterprise Server Rack</text>
+  <text x="320" y="474" font-size="13" fill="#555">SRV-RACK-42U</text><text x="480" y="474" font-size="13" fill="#555">Hardware</text>
+  <text x="640" y="474" font-size="13" fill="#333">2</text>
+  <text x="740" y="474" font-size="13" fill="#333">₹2,49,999</text><text x="920" y="474" font-size="13" font-weight="600" fill="#333">₹4,99,998</text>
+  <line x1="52" y1="490" x2="1230" y2="490" stroke="#f0f0f0"/>
+  <text x="68" y="514" font-size="13" font-weight="500" fill="#333">Cloud Storage License (1TB)</text>
+  <text x="320" y="514" font-size="13" fill="#555">CLD-STO-1TB</text><text x="480" y="514" font-size="13" fill="#555">Software</text>
+  <text x="640" y="514" font-size="13" fill="#333">5</text>
+  <text x="740" y="514" font-size="13" fill="#333">₹59,999</text><text x="920" y="514" font-size="13" font-weight="600" fill="#333">₹2,99,995</text>
+  <line x1="52" y1="530" x2="1230" y2="530" stroke="#f0f0f0"/>
+  <text x="68" y="554" font-size="13" font-weight="500" fill="#333">Firewall Appliance</text>
+  <text x="320" y="554" font-size="13" fill="#555">FW-APPL-1U</text><text x="480" y="554" font-size="13" fill="#555">Security</text>
+  <text x="640" y="554" font-size="13" fill="#333">1</text>
+  <text x="740" y="554" font-size="13" fill="#333">₹3,89,999</text><text x="920" y="554" font-size="13" font-weight="600" fill="#333">₹3,89,999</text>
+  <!-- Total -->
+  <line x1="52" y1="570" x2="1230" y2="570" stroke="#e0e0e0" stroke-width="2"/>
+  <text x="850" y="598" font-size="14" font-weight="600" fill="#333" text-anchor="end">Total:</text>
+  <text x="920" y="598" font-size="18" font-weight="700" fill="#1a237e">₹11,89,992</text>
 </svg>

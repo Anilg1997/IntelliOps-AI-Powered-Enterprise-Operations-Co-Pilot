@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
         <span class="brand-text">IntelliOps</span>
       </div>
       <div class="navbar-links" *ngIf="authService.isAuthenticated()">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
         <a routerLink="/orders" routerLinkActive="active">Orders</a>
         <a routerLink="/copilot" routerLinkActive="active">AI Co-Pilot</a>
       </div>

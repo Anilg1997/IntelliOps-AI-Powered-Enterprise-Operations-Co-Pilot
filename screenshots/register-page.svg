@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" font-family="'Segoe UI', -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e"/>
+      <stop offset="50%" style="stop-color:#283593"/>
+      <stop offset="100%" style="stop-color:#3949ab"/>
+    </linearGradient>
+    <linearGradient id="btn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c4dff"/>
+      <stop offset="100%" style="stop-color:#651fff"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="720" fill="url(#bg)"/>
+
+  <!-- Auth Card -->
+  <rect x="390" y="40" width="500" height="640" rx="16" fill="white" filter="url(#shadow)"/>
+
+  <!-- Header -->
+  <text x="640" y="100" text-anchor="middle" font-size="48">⚡</text>
+  <text x="640" y="145" text-anchor="middle" font-size="26" font-weight="700" fill="#1a237e">Create Account</text>
+  <text x="640" y="168" text-anchor="middle" font-size="13" fill="#666">Join IntelliOps Platform</text>
+
+  <!-- Form -->
+  <!-- Full Name -->
+  <text x="430" y="210" font-size="13" font-weight="600" fill="#444">Full Name</text>
+  <rect x="430" y="218" width="420" height="42" rx="8" fill="#f8f9fc" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="446" y="245" font-size="14" fill="#333" font-weight="500">John Doe</text>
+
+  <!-- Email -->
+  <text x="430" y="285" font-size="13" font-weight="600" fill="#444">Email</text>
+  <rect x="430" y="293" width="420" height="42" rx="8" fill="#f8f9fc" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="446" y="320" font-size="14" fill="#333" font-weight="500">john.doe@company.com</text>
+
+  <!-- Phone -->
+  <text x="430" y="360" font-size="13" font-weight="600" fill="#444">Phone Number (optional)</text>
+  <rect x="430" y="368" width="420" height="42" rx="8" fill="#f8f9fc" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="446" y="395" font-size="14" fill="#999">Enter your phone number</text>
+
+  <!-- Password -->
+  <text x="430" y="435" font-size="13" font-weight="600" fill="#444">Password</text>
+  <rect x="430" y="443" width="420" height="42" rx="8" fill="#f8f9fc" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="446" y="470" font-size="14" fill="#333">••••••••</text>
+
+  <!-- Confirm Password -->
+  <text x="430" y="510" font-size="13" font-weight="600" fill="#444">Confirm Password</text>
+  <rect x="430" y="518" width="420" height="42" rx="8" fill="#f8f9fc" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="446" y="545" font-size="14" fill="#333">••••••••</text>
+
+  <!-- Submit Button -->
+  <rect x="430" y="578" width="420" height="46" rx="10" fill="url(#btn)"/>
+  <text x="640" y="606" text-anchor="middle" font-size="15" font-weight="600" fill="white">Create Account</text>
+
+  <!-- Footer Link -->
+  <text x="640" y="660" text-anchor="middle" font-size="13" fill="#666">Already have an account? </text>
+  <text x="655" y="660" text-anchor="start" font-size="13" font-weight="600" fill="#7c4dff" style="cursor:pointer">Sign in</text>
+</svg>

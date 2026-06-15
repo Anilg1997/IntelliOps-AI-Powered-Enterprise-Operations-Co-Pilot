@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" font-family="'Segoe UI', -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="nav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e"/>
+      <stop offset="100%" style="stop-color:#283593"/>
+    </linearGradient>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb"/>
+      <stop offset="100%" style="stop-color:#f5576c"/>
+    </linearGradient>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#43e97b"/>
+      <stop offset="100%" style="stop-color:#38f9d7"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="720" fill="#f5f7fa"/>
+
+  <!-- Navbar -->
+  <rect width="1280" height="56" fill="url(#nav)"/>
+  <text x="24" y="36" font-size="20" font-weight="700" fill="white">⚡ IntelliOps</text>
+  <text x="200" y="36" font-size="14" fill="rgba(255,255,255,0.8)">Dashboard</text>
+  <text x="300" y="36" font-size="14" fill="rgba(255,255,255,0.8)">Orders</text>
+  <text x="390" y="36" font-size="14" fill="rgba(255,255,255,0.8)">AI Co-Pilot</text>
+
+  <!-- User Info -->
+  <circle cx="1180" cy="28" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="1180" y="33" text-anchor="middle" font-size="12" font-weight="600" fill="white">J</text>
+  <text x="1090" y="33" font-size="13" fill="rgba(255,255,255,0.9)">John Doe</text>
+  <circle cx="1210" cy="28" r="5" fill="#4caf50"/>
+
+  <!-- Page Header -->
+  <text x="32" y="96" font-size="24" font-weight="700" fill="#1a1a2e">Dashboard</text>
+  <text x="32" y="118" font-size="13" fill="#888">Enterprise Operations Overview</text>
+
+  <!-- Stats Cards -->
+  <rect x="32" y="140" width="280" height="120" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="32" y="140" width="8" height="120" rx="4" fill="url(#grad1)"/>
+  <text x="60" y="180" font-size="32" font-weight="700" fill="#1a237e">156</text>
+  <text x="60" y="200" font-size="12" fill="#666">Total Orders</text>
+  <text x="270" y="180" font-size="24">📋</text>
+
+  <rect x="332" y="140" width="280" height="120" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="332" y="140" width="8" height="120" rx="4" fill="url(#grad2)"/>
+  <text x="360" y="180" font-size="32" font-weight="700" fill="#1a237e">₹2.4M</text>
+  <text x="360" y="200" font-size="12" fill="#666">Total Revenue</text>
+  <text x="570" y="180" font-size="24">💰</text>
+
+  <rect x="632" y="140" width="280" height="120" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="632" y="140" width="8" height="120" rx="4" fill="url(#grad3)"/>
+  <text x="660" y="180" font-size="32" font-weight="700" fill="#1a237e">842</text>
+  <text x="660" y="200" font-size="12" fill="#666">Products in Stock</text>
+  <text x="870" y="180" font-size="24">📦</text>
+
+  <rect x="932" y="140" width="320" height="120" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="932" y="140" width="8" height="120" rx="4" fill="url(#grad4)"/>
+  <text x="960" y="180" font-size="32" font-weight="700" fill="#1a237e">98.5%</text>
+  <text x="960" y="200" font-size="12" fill="#666">Order Fulfillment Rate</text>
+  <text x="1200" y="180" font-size="24">📊</text>
+
+  <!-- Order List Card -->
+  <rect x="32" y="280" width="780" height="420" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="52" y="300" width="4" height="20" rx="2" fill="#7c4dff"/>
+  <text x="68" y="316" font-size="16" font-weight="600" fill="#333">Recent Orders</text>
+  <text x="750" y="316" font-size="12" fill="#7c4dff" font-weight="600">View All →</text>
+
+  <!-- Table Header -->
+  <rect x="52" y="338" width="740" height="36" rx="6" fill="#f8f9fc"/>
+  <text x="68" y="360" font-size="11" font-weight="600" fill="#888">ORDER #</text>
+  <text x="200" y="360" font-size="11" font-weight="600" fill="#888">CUSTOMER</text>
+  <text x="380" y="360" font-size="11" font-weight="600" fill="#888">STATUS</text>
+  <text x="500" y="360" font-size="11" font-weight="600" fill="#888">AMOUNT</text>
+  <text x="620" y="360" font-size="11" font-weight="600" fill="#888">DATE</text>
+
+  <!-- Order Row 1 -->
+  <line x1="52" y1="390" x2="792" y2="390" stroke="#f0f0f0"/>
+  <text x="68" y="408" font-size="13" font-weight="600" fill="#1a237e">ORD-20250101-A1B2</text>
+  <text x="200" y="408" font-size="13" fill="#333">Acme Corp</text>
+  <rect x="380" y="396" width="80" height="22" rx="10" fill="#e8f5e9"/>
+  <text x="420" y="412" text-anchor="middle" font-size="11" font-weight="600" fill="#2e7d32">DELIVERED</text>
+  <text x="500" y="408" font-size="13" font-weight="600" fill="#333">₹1,24,500</text>
+  <text x="620" y="408" font-size="12" fill="#888">Jan 15, 2025</text>
+
+  <!-- Order Row 2 -->
+  <line x1="52" y1="430" x2="792" y2="430" stroke="#f0f0f0"/>
+  <text x="68" y="448" font-size="13" font-weight="600" fill="#1a237e">ORD-20250102-C3D4</text>
+  <text x="200" y="448" font-size="13" fill="#333">TechStart Inc</text>
+  <rect x="380" y="436" width="80" height="22" rx="10" fill="#fff3e0"/>
+  <text x="420" y="452" text-anchor="middle" font-size="11" font-weight="600" fill="#f57c00">PENDING</text>
+  <text x="500" y="448" font-size="13" font-weight="600" fill="#333">₹67,800</text>
+  <text x="620" y="448" font-size="12" fill="#888">Jan 14, 2025</text>
+
+  <!-- Order Row 3 -->
+  <line x1="52" y1="470" x2="792" y2="470" stroke="#f0f0f0"/>
+  <text x="68" y="488" font-size="13" font-weight="600" fill="#1a237e">ORD-20250103-E5F6</text>
+  <text x="200" y="488" font-size="13" fill="#333">GlobalRetail</text>
+  <rect x="380" y="476" width="80" height="22" rx="10" fill="#fef2f2"/>
+  <text x="420" y="492" text-anchor="middle" font-size="11" font-weight="600" fill="#d32f2f">ON HOLD</text>
+  <text x="500" y="488" font-size="13" font-weight="600" fill="#333">₹2,50,000</text>
+  <text x="620" y="488" font-size="12" fill="#888">Jan 13, 2025</text>
+
+  <!-- Order Row 4 -->
+  <line x1="52" y1="510" x2="792" y2="510" stroke="#f0f0f0"/>
+  <text x="68" y="528" font-size="13" font-weight="600" fill="#1a237e">ORD-20250104-G7H8</text>
+  <text x="200" y="528" font-size="13" fill="#333">DataFlow Ltd</text>
+  <rect x="380" y="516" width="80" height="22" rx="10" fill="#e3f2fd"/>
+  <text x="420" y="532" text-anchor="middle" font-size="11" font-weight="600" fill="#1976d2">CONFIRMED</text>
+  <text x="500" y="528" font-size="13" font-weight="600" fill="#333">₹89,200</text>
+  <text x="620" y="528" font-size="12" fill="#888">Jan 12, 2025</text>
+
+  <!-- Order Row 5 -->
+  <line x1="52" y1="550" x2="792" y2="550" stroke="#f0f0f0"/>
+  <text x="68" y="568" font-size="13" font-weight="600" fill="#1a237e">ORD-20250105-I9J0</text>
+  <text x="200" y="568" font-size="13" fill="#333">CloudBase Inc</text>
+  <rect x="380" y="556" width="80" height="22" rx="10" fill="#e8f5e9"/>
+  <text x="420" y="572" text-anchor="middle" font-size="11" font-weight="600" fill="#388e3c">SHIPPED</text>
+  <text x="500" y="568" font-size="13" font-weight="600" fill="#333">₹1,75,000</text>
+  <text x="620" y="568" font-size="12" fill="#888">Jan 11, 2025</text>
+
+  <!-- Status Distribution Card -->
+  <rect x="832" y="280" width="420" height="200" rx="12" fill="white" filter="url(#shadow)"/>
+  <text x="852" y="316" font-size="16" font-weight="600" fill="#333">Order Status Distribution</text>
+
+  <!-- Pie Chart Representation -->
+  <circle cx="970" cy="410" r="65" fill="none" stroke="#e8f5e9" stroke-width="20"/>
+  <circle cx="970" cy="410" r="65" fill="none" stroke="#fff3e0" stroke-width="20" stroke-dasharray="120 290" stroke-dashoffset="-40"/>
+  <circle cx="970" cy="410" r="65" fill="none" stroke="#e8eaf6" stroke-width="20" stroke-dasharray="60 350" stroke-dashoffset="-170"/>
+  <circle cx="970" cy="410" r="65" fill="none" stroke="#fef2f2" stroke-width="20" stroke-dasharray="30 380" stroke-dashoffset="-230"/>
+
+  <!-- Legend -->
+  <rect x="1070" y="350" width="12" height="12" rx="3" fill="#e8f5e9"/>
+  <text x="1090" y="362" font-size="12" fill="#555">Delivered (52%)</text>
+  <rect x="1070" y="375" width="12" height="12" rx="3" fill="#fff3e0"/>
+  <text x="1090" y="387" font-size="12" fill="#555">Pending (24%)</text>
+  <rect x="1070" y="400" width="12" height="12" rx="3" fill="#e8eaf6"/>
+  <text x="1090" y="412" font-size="12" fill="#555">Processing (18%)</text>
+  <rect x="1070" y="425" width="12" height="12" rx="3" fill="#fef2f2"/>
+  <text x="1090" y="437" font-size="12" fill="#555">On Hold (6%)</text>
+
+  <!-- AI Insight Card -->
+  <rect x="832" y="495" width="420" height="205" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="832" y="495" width="8" height="205" rx="4" fill="url(#grad1)"/>
+  <text x="860" y="530" font-size="16" font-weight="600" fill="#333">🤖 AI Co-Pilot Insights</text>
+  <text x="860" y="560" font-size="13" fill="#555">• 3 orders on hold — stock verification needed</text>
+  <text x="860" y="582" font-size="13" fill="#555">• 2 pending payments in billing system</text>
+  <text x="860" y="604" font-size="13" fill="#555">• Inventory low: SSL-WILD-1Y (restock soon)</text>
+  <text x="860" y="626" font-size="13" fill="#555">• Peak order processing time: 2-4 PM</text>
+  <rect x="860" y="650" width="160" height="34" rx="8" fill="url(#grad1)"/>
+  <text x="940" y="672" text-anchor="middle" font-size="13" font-weight="600" fill="white">View Details →</text>
+</svg>

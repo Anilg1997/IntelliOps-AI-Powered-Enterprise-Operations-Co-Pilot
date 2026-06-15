@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" font-family="'Segoe UI', -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e"/>
+      <stop offset="50%" style="stop-color:#283593"/>
+      <stop offset="100%" style="stop-color:#3949ab"/>
+    </linearGradient>
+    <linearGradient id="btn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c4dff"/>
+      <stop offset="100%" style="stop-color:#651fff"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="720" fill="url(#bg)"/>
+
+  <!-- Auth Card -->
+  <rect x="390" y="80" width="500" height="520" rx="16" fill="white" filter="url(#shadow)"/>
+
+  <!-- Header -->
+  <text x="640" y="140" text-anchor="middle" font-size="48">⚡</text>
+  <text x="640" y="185" text-anchor="middle" font-size="28" font-weight="700" fill="#1a237e">IntelliOps</text>
+  <text x="640" y="208" text-anchor="middle" font-size="13" fill="#666">AI-Powered Enterprise Operations Co-Pilot</text>
+
+  <!-- Form -->
+  <!-- Email -->
+  <text x="430" y="260" font-size="13" font-weight="600" fill="#444">Email</text>
+  <rect x="430" y="268" width="420" height="46" rx="8" fill="#f8f9fc" stroke="#7c4dff" stroke-width="2"/>
+  <text x="446" y="297" font-size="14" fill="#333" font-weight="500">john.doe@company.com</text>
+
+  <!-- Password -->
+  <text x="430" y="340" font-size="13" font-weight="600" fill="#444">Password</text>
+  <rect x="430" y="348" width="420" height="46" rx="8" fill="#f8f9fc" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="446" y="377" font-size="14" fill="#333">••••••••</text>
+
+  <!-- Sign In Button -->
+  <rect x="430" y="420" width="420" height="46" rx="10" fill="url(#btn)"/>
+  <text x="640" y="448" text-anchor="middle" font-size="15" font-weight="600" fill="white">Sign In</text>
+
+  <!-- Footer Link -->
+  <text x="640" y="530" text-anchor="middle" font-size="13" fill="#666">Don't have an account? </text>
+  <text x="660" y="530" text-anchor="start" font-size="13" font-weight="600" fill="#7c4dff" style="cursor:pointer">Create one</text>
+
+  <!-- Features Section -->
+  <text x="640" y="570" text-anchor="middle" font-size="11" fill="#999">AI Co-Pilot · Order Management · Inventory · Legacy Integration</text>
+</svg>

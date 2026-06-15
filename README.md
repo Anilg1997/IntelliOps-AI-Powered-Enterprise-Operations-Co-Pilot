@@ -1,28 +1,81 @@
+<div align="center">
+
 # ⚡ IntelliOps — AI-Powered Enterprise Operations Co-Pilot
 
-[![Java](https://img.shields.io/badge/Java-17-orange)](https://adoptium.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen)](https://spring.io/projects/spring-boot)
-[![Angular](https://img.shields.io/badge/Angular-17-red)](https://angular.dev/)
-[![PostgreSQL](https://img.shields.io/badge/DB-PostgreSQL-336791)](https://www.postgresql.org/)
-[![MongoDB](https://img.shields.io/badge/DB-MongoDB-47A248)](https://www.mongodb.com/)
-[![GraphQL](https://img.shields.io/badge/API-GraphQL-E10098)](https://graphql.org/)
-[![Ollama](https://img.shields.io/badge/AI-Ollama-000)](https://ollama.ai/)
+**An AI co-pilot that sits on top of enterprise order management, inventory, billing, and legacy systems — answering support questions in plain English using RAG, tool-calling agents, and a locally-hosted LLM.**
 
-> **Large enterprises run order management, inventory, and billing on different systems** — often a mix of modern microservices and legacy platforms (Oracle + SOAP is extremely common in retail, telecom, banking, and insurance). When something goes wrong with an order, a support/ops engineer has to manually check 3-4 different systems, each with a different API style, plus search internal runbooks and FAQs to figure out what to do.
->
-> **IntelliOps** is an AI co-pilot that sits on top of this landscape. A support engineer asks a question in plain English ("Why is order #4521 stuck, and has the customer been billed?"), and an AI agent retrieves relevant troubleshooting docs (RAG), calls the right backend services via standardized tool interfaces (MCP), and returns a synthesized answer with a recommended next action — all running on a locally-hosted LLM (Ollama) so no enterprise data leaves the network.
+[![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk)](https://adoptium.net/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-brightgreen?style=flat-square&logo=spring)](https://spring.io/projects/spring-boot)
+[![Angular](https://img.shields.io/badge/Angular-17-red?style=flat-square&logo=angular)](https://angular.dev/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![GraphQL](https://img.shields.io/badge/GraphQL-BFF-E10098?style=flat-square&logo=graphql)](https://graphql.org/)
+[![gRPC](https://img.shields.io/badge/gRPC-internal-4285F4?style=flat-square)](https://grpc.io/)
+[![Kafka](https://img.shields.io/badge/Kafka-events-231F20?style=flat-square&logo=apachekafka)](https://kafka.apache.org/)
+[![Ollama](https://img.shields.io/badge/AI-Ollama_(local_LLM)-000?style=flat-square&logo=ollama)](https://ollama.ai/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker)](https://docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+
+---
+
+## 🎯 The Problem
+
+> Large enterprises run order management, inventory, and billing on **different systems** — often a mix of modern microservices and legacy platforms (Oracle + SOAP is extremely common in retail, telecom, banking, and insurance). When something goes wrong with an order, a support/ops engineer has to manually check **3-4 different systems**, each with a different API style, plus search internal runbooks and FAQs to figure out what to do.
+
+## 🚀 The Solution
+
+**IntelliOps** is an AI co-pilot that sits on top of this landscape. A support engineer asks a question in **plain English** ("Why is order #4521 stuck, and has the customer been billed?"), and an AI agent retrieves relevant troubleshooting docs (RAG), calls the right backend services via standardized tool interfaces (MCP), and returns a **synthesized answer** with a recommended next action — all running on a **locally-hosted LLM (Ollama)** so no enterprise data leaves the network.
 
 ---
 
 ## 📸 Screenshots
 
-| Order List Dashboard | Order Detail (GraphQL BFF) |
-|:---:|:---:|
-| ![Order List](screenshots/order-list.svg) | ![Order Detail](screenshots/order-detail.svg) |
+### 🔐 Authentication
 
-| AI Co-Pilot Chat | Legacy Billing Integration |
-|:---:|:---:|
-| ![AI Co-Pilot](screenshots/ai-copilot.svg) | ![Legacy Billing](screenshots/legacy-billing.svg) |
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="screenshots/login-page.svg" alt="Login Page" width="100%"/><br/><b>Login Page</b> — JWT-based authentication</td>
+    <td width="50%" align="center"><img src="screenshots/register-page.svg" alt="Register Page" width="100%"/><br/><b>Registration</b> — User sign-up with validation</td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><img src="screenshots/register-success.svg" alt="Registration Success" width="100%"/><br/><b>Registration Success</b> — Account created confirmation</td>
+    <td width="50%" align="center"></td>
+  </tr>
+</table>
+
+### 📊 Operations Dashboard
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/dashboard-overview.svg" alt="Dashboard" width="100%"/><br/><b>Operations Dashboard</b> — Stats, order list, inventory, billing, AI insights</td>
+  </tr>
+</table>
+
+### 📋 Order Management
+
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="screenshots/order-list.svg" alt="Order List" width="100%"/><br/><b>Order List</b> — Search, filter, status tracking</td>
+    <td width="50%" align="center"><img src="screenshots/order-detail.svg" alt="Order Detail" width="100%"/><br/><b>Order Detail</b> — Customer info, timeline, line items</td>
+  </tr>
+</table>
+
+### 🤖 AI Co-Pilot & Legacy Integration
+
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="screenshots/ai-copilot.svg" alt="AI Co-Pilot Chat" width="100%"/><br/><b>AI Co-Pilot</b> — RAG-powered chat with MCP tool calling</td>
+    <td width="50%" align="center"><img src="screenshots/legacy-billing.svg" alt="Legacy Billing" width="100%"/><br/><b>Legacy Billing</b> — Oracle + SOAP integration with Kafka events</td>
+  </tr>
+</table>
+
+### 🏗️ Architecture
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/architecture-flow.svg" alt="Architecture" width="100%"/><br/><b>End-to-End Architecture</b> — Microservices, APIs, databases, AI pipeline</td>
+  </tr>
+</table>
 
 ---
 
@@ -30,7 +83,7 @@
 
 ```
                         ┌─────────────────────────┐
-                        │   Angular Frontend       │
+                        │   Angular 17 Frontend    │
                         │  (Auth + Co-pilot chat   │
                         │   + admin dashboards)    │
                         └───────────┬──────────────┘
@@ -45,8 +98,9 @@
         │              AI Co-Pilot Service (port 8083)         │
         │   Spring AI + LangChain4j + Ollama (local LLM)       │
         │   - RAG over runbooks/FAQs (pgvector)                │
-        │   - Agent w/ tool calling                            │
+        │   - Agent w/ tool calling (MCP)                      │
         │   - Conversation memory (MongoDB)                    │
+        │   - SSE streaming responses                          │
         └───────┬───────────────┬───────────────┬──────────────┘
                 │ MCP            │ MCP           │ MCP
                 ▼                ▼               ▼
@@ -66,11 +120,127 @@
 
 ---
 
-## 🧠 The Pitch (for interviews)
+## ✨ Key Features
 
-> Large enterprises run order management, inventory, and billing on different systems — often a mix of modern microservices and legacy platforms. When something goes wrong, a support engineer has to manually check 3-4 different systems, each with a different API style, plus search internal runbooks and FAQs.
->
-> **IntelliOps is an AI co-pilot** that sits on top of this landscape. A support engineer asks a question in plain English, and an AI agent retrieves relevant troubleshooting docs (RAG), calls the right backend services via standardized tool interfaces (MCP), and returns a synthesized answer with a recommended next action — all running on a locally-hosted LLM (Ollama) so no enterprise data leaves the network.
+### 🔐 Full Authentication Flow
+- **JWT-based authentication** with Spring Security
+- **User registration** with email/password validation
+- **Role-based access control** (USER, ADMIN, OPERATOR)
+- Secure password hashing with **bcrypt**
+- Token-based session management with auto-refresh
+
+### 📊 Operations Dashboard
+- **Real-time stats** — Total orders, revenue, inventory, fulfillment rate
+- **Order list** with search, filter, and status badges
+- **Inventory overview** with stock level indicators and reorder alerts
+- **Billing summary** — invoices collected, pending, and overdue
+- **AI-powered insights** — automated recommendations and alerts
+
+### 📋 Order Management (Phase 1)
+- **REST + GraphQL BFF** dual API surface
+- **PostgreSQL** with ACID transactions and Flyway migrations
+- **Kafka event publishing** for audit trail and notifications
+- **Status workflow** — Pending → Confirmed → Processing → Shipped → Delivered
+
+### 📦 Inventory & Catalog (Phase 2)
+- **MongoDB** document model for flexible product attributes
+- **gRPC** low-latency stock checking and reservation
+- **Product categories** with hierarchical relationships
+- **Real-time stock tracking** with reorder thresholds
+
+### 🤖 AI Co-Pilot (Phase 3)
+- **Local LLM** via Ollama — no data leaves the network
+- **RAG** over enterprise runbooks and FAQs (pgvector)
+- **MCP tool calling** — Order, Inventory, and Billing agents
+- **SSE streaming** for real-time chat responses
+- **Conversation memory** stored in MongoDB
+
+### 💰 Legacy Integration (Phase 4)
+- **Oracle DB** integration via H2 Oracle compatibility mode
+- **SOAP web services** for legacy billing system simulation
+- **Kafka event pipeline** for cross-system synchronization
+- **Invoice and payment management** with status tracking
+
+### 🎯 Agent Orchestration (Phase 5)
+- **Unified dashboard** with cross-service insights
+- **Automated AI recommendations** based on system state
+- **Inventory alerts** and restock notifications
+- **Billing status monitoring** and overdue tracking
+
+---
+
+## 🛠️ Tech Stack
+
+<table>
+  <tr>
+    <th>Layer</th>
+    <th>Technology</th>
+  </tr>
+  <tr>
+    <td><b>Backend</b></td>
+    <td>Java 17, Spring Boot 3.2, Spring Data JPA, Spring Security</td>
+  </tr>
+  <tr>
+    <td><b>Auth</b></td>
+    <td>JWT (jjwt), bcrypt, Spring Security filter chain</td>
+  </tr>
+  <tr>
+    <td><b>API (External)</b></td>
+    <td>REST (versionable, cacheable)</td>
+  </tr>
+  <tr>
+    <td><b>API (BFF)</b></td>
+    <td>GraphQL (single-round-trip queries)</td>
+  </tr>
+  <tr>
+    <td><b>API (Internal)</b></td>
+    <td>gRPC (low-latency service-to-service)</td>
+  </tr>
+  <tr>
+    <td><b>Legacy API</b></td>
+    <td>SOAP (Oracle adapter simulation)</td>
+  </tr>
+  <tr>
+    <td><b>Database (Auth)</b></td>
+    <td>PostgreSQL 16</td>
+  </tr>
+  <tr>
+    <td><b>Database (Orders)</b></td>
+    <td>PostgreSQL 16 (ACID, relational)</td>
+  </tr>
+  <tr>
+    <td><b>Database (Catalog)</b></td>
+    <td>MongoDB 7 (flexible schema)</td>
+  </tr>
+  <tr>
+    <td><b>Database (Legacy)</b></td>
+    <td>Oracle XE (simulated legacy)</td>
+  </tr>
+  <tr>
+    <td><b>Cache</b></td>
+    <td>Redis 7</td>
+  </tr>
+  <tr>
+    <td><b>Messaging</b></td>
+    <td>Apache Kafka / Redpanda</td>
+  </tr>
+  <tr>
+    <td><b>AI</b></td>
+    <td>Ollama (llama3.1), LangChain4j, pgvector</td>
+  </tr>
+  <tr>
+    <td><b>Frontend</b></td>
+    <td>Angular 17, Apollo GraphQL, SSE streaming</td>
+  </tr>
+  <tr>
+    <td><b>Infra</b></td>
+    <td>Docker Compose, AWS (ECS, RDS, MSK)</td>
+  </tr>
+  <tr>
+    <td><b>CI/CD</b></td>
+    <td>GitHub Actions</td>
+  </tr>
+</table>
 
 ---
 
@@ -78,38 +248,45 @@
 
 ### Prerequisites
 
-- Java 17+ (Temurin JDK recommended)
-- Maven 3.9+
-- Node.js 20+
-- Docker & Docker Compose
-- Ollama (for AI features — [ollama.ai](https://ollama.ai))
+| Tool | Version | Purpose |
+|------|---------|---------|
+| Java | 17+ | Backend microservices |
+| Maven | 3.9+ | Build & dependency management |
+| Node.js | 20+ | Angular frontend |
+| Docker | Latest | PostgreSQL, MongoDB, Kafka, Oracle |
+| Ollama | Latest | Local LLM for AI features |
 
 ### Quick Start
 
 ```bash
-# 1. Build all services
+# 1. Clone the repository
+git clone https://github.com/Anilg1997/IntelliOps-AI-Powered-Enterprise-Operations-Co-Pilot.git
+cd IntelliOps-AI-Powered-Enterprise-Operations-Co-Pilot
+
+# 2. Build all services
 mvn clean install -DskipTests
 
-# 2. Start infrastructure (PostgreSQL, Kafka, MongoDB, etc.)
-docker-compose up -d postgres kafka mongodb
+# 3. Start infrastructure (PostgreSQL, Kafka, MongoDB, Oracle)
+docker-compose up -d
 
-# 3. Start Auth Service (new terminal)
+# 4. Start Auth Service (terminal 1)
 cd backend/auth-service
 mvn spring-boot:run
 
-# 4. Start Order Service (new terminal)
+# 5. Start Order Service (terminal 2)
 cd backend/order-service
 mvn spring-boot:run
 
-# 5. Start Frontend (new terminal)
+# 6. Start Frontend (terminal 3)
 cd frontend/intellops-ui
 npm install
 ng serve
+# Open http://localhost:4200
 ```
 
 ### API Endpoints
 
-#### Auth Service (port 8080)
+#### 🔐 Auth Service (port 8080)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -117,7 +294,7 @@ ng serve
 | `POST` | `/api/auth/login` | Login and get JWT token |
 | `GET` | `/api/auth/me` | Get current user profile |
 
-#### Order Service (port 8081)
+#### 📋 Order Service (port 8081)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -165,6 +342,7 @@ intellops-platform/
 │   │   │   ├── entity/           # JPA entities (Customer, Product, Order)
 │   │   │   ├── exception/        # Global exception handler
 │   │   │   ├── graphql/          # GraphQL query controllers
+│   │   │   ├── grpc/             # gRPC client for Inventory
 │   │   │   ├── repository/       # Spring Data JPA repositories
 │   │   │   └── service/          # Business logic
 │   │   └── src/main/resources/
@@ -176,6 +354,17 @@ intellops-platform/
 │   └── proto/                     # Shared protobuf definitions
 ├── frontend/
 │   └── intellops-ui/             # Angular 17 SPA
+│       ├── src/app/components/
+│       │   ├── auth/             # Login & Register pages
+│       │   ├── dashboard/        # Phase 5: Operations Dashboard
+│       │   ├── layout/           # Navbar with auth-aware navigation
+│       │   ├── order-list/       # Order list with stats
+│       │   ├── order-detail/     # Single order view
+│       │   └── chat/             # AI Co-Pilot chat interface
+│       ├── src/app/services/     # Auth, Order, Copilot services
+│       ├── src/app/guards/       # Auth guard for route protection
+│       └── src/app/interceptors/ # JWT token interceptor
+├── screenshots/                  # Application screenshots
 ├── docs/
 │   ├── architecture.md           # Architecture docs & sequence diagrams
 │   └── tech-decisions.md         # Technology decision log
@@ -186,41 +375,32 @@ intellops-platform/
 
 ---
 
-## 🛠️ Tech Stack
+## 📋 Build Phases
 
-| Layer | Technology |
-|-------|-----------|
-| **Backend** | Java 17, Spring Boot 3.2, Spring Data JPA |
-| **Auth** | Spring Security, JWT (jjwt), bcrypt |
-| **API (External)** | REST (versionable, cacheable) |
-| **API (BFF)** | GraphQL (single-round-trip queries) |
-| **API (Internal)** | gRPC (low-latency service-to-service) |
-| **Legacy API** | SOAP (Oracle adapter simulation) |
-| **Database (Auth)** | PostgreSQL 16 |
-| **Database (Orders)** | PostgreSQL 16 (ACID, relational) |
-| **Database (Catalog)** | MongoDB 7 (flexible schema) |
-| **Database (Legacy)** | Oracle XE (simulated legacy) |
-| **Cache** | Redis 7 |
-| **Messaging** | Apache Kafka / Redpanda |
-| **AI** | Ollama (llama3.1), Spring AI, LangChain4j |
-| **Vector Store** | PostgreSQL + pgvector |
-| **Frontend** | Angular 17, Apollo GraphQL |
-| **Infra** | Docker Compose, AWS (ECS, RDS, MSK) |
-| **CI/CD** | GitHub Actions |
+| Phase | Status | Description | Key Technologies |
+|-------|--------|-------------|------------------|
+| **Auth** | ✅ Complete | User registration & login with JWT | Spring Security, JWT, bcrypt |
+| **Phase 1** | ✅ Complete | Order Service — REST + GraphQL + PostgreSQL + Kafka | Spring Boot, GraphQL, Kafka |
+| **Phase 2** | ✅ Complete | Inventory Service — MongoDB + gRPC product catalog | MongoDB, gRPC, Protobuf |
+| **Phase 3** | ✅ Complete | AI Co-Pilot — LangChain4j + Ollama + RAG + MCP tools | LangChain4j, Ollama, pgvector |
+| **Phase 4** | ✅ Complete | Legacy Billing — Oracle + SOAP + Kafka event pipeline | Oracle, SOAP, Spring-WS |
+| **Phase 5** | ✅ Complete | Agent orchestration, conversation memory, dashboards | Angular Dashboard, AI insights |
+| **Phase 6** | 📋 Planned | Dockerization, AWS deploy, polish docs & demo video | AWS ECS, RDS, MSK |
 
 ---
 
-## 📋 Build Phases
+## 🧠 Why This Project Stands Out (For Interviews)
 
-| Phase | Status | Description |
-|-------|--------|-------------|
-| **Auth** | ✅ Complete | User registration & login with JWT, Spring Security |
-| **Phase 1** | ✅ Complete | Order Service (REST + GraphQL + PostgreSQL + Kafka), Angular skeleton, CI |
-| **Phase 2** | ✅ Complete | Inventory Service (MongoDB + gRPC), product catalog, stock management |
-| **Phase 3** | ✅ Complete | AI Co-Pilot: LangChain4j + Ollama, RAG over pgvector, MCP tools, SSE chat |
-| **Phase 4** | ✅ Complete | Legacy Billing adapter (Oracle + SOAP), Kafka event pipeline |
-| **Phase 5** | 📋 Planned | Full agent orchestration, conversation memory, dashboards |
-| **Phase 6** | 📋 Planned | Dockerization, AWS deploy, polish docs & demo video |
+**IntelliOps** demonstrates enterprise-grade skills that go far beyond simple CRUD apps:
+
+1. **Multi-service microservices architecture** — 5 independent Spring Boot services with different databases and API styles
+2. **AI integration with local LLM** — RAG, tool calling, conversation memory using Ollama (privacy-first)
+3. **Legacy system integration** — Oracle + SOAP adapter pattern (real-world enterprise skill)
+4. **Event-driven architecture** — Kafka for decoupling services and creating audit trails
+5. **Multiple API paradigms** — REST, GraphQL (BFF), gRPC (internal), SOAP (legacy), SSE (streaming)
+6. **Full authentication** — JWT with Spring Security, bcrypt, role-based access
+7. **Modern frontend** — Angular 17 standalone components, Apollo GraphQL, reactive forms, auth guards
+8. **Cloud-ready** — Docker Compose, CI/CD with GitHub Actions, AWS deployment ready
 
 ---
 
@@ -230,8 +410,10 @@ intellops-platform/
 
 Java | Spring Boot | Microservices | Angular | Kafka | Generative AI | RAG | Agent AI | Enterprise Architecture
 
+[![GitHub](https://img.shields.io/badge/GitHub-Anilg1997-181717?style=flat-square&logo=github)](https://github.com/Anilg1997)
+
 ---
 
 ## 📄 License
 
-MIT
+MIT — See [LICENSE](LICENSE) for details.
