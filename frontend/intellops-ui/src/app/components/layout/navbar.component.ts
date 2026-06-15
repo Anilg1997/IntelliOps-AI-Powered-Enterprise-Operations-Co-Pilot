@@ -14,10 +14,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       <div class="navbar-links">
         <a routerLink="/orders" routerLinkActive="active">Orders</a>
         <a routerLink="/orders/new" routerLinkActive="active">New Order</a>
+        <a routerLink="/copilot" routerLinkActive="active">AI Co-Pilot</a>
       </div>
       <div class="navbar-status">
         <span class="status-dot online"></span>
-        <span class="status-text">Co-Pilot Active</span>
+        <span class="status-text">Ollama Ready</span>
       </div>
     </nav>
   `,

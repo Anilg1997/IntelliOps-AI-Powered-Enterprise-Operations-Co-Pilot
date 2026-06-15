@@ -82,6 +82,24 @@ services:
       - "8082:8082"
       - "9091:9091"
 
+  ai-copilot-service:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: intellops-copilot
+    depends_on:
+      postgres:
+        condition: service_started
+      mongodb:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/intellops_order
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATA_MONGODB_URI: mongodb://admin:Mongo%402024@mongodb:27017/intellops_copilot?authSource=admin
+      INTELLOPS_AI_OLLAMA_BASE_URL: http://host.docker.internal:11434
+      SERVER_PORT: 8083
+    ports:
+      - "8083:8083"
+
 volumes:
   postgres-data:
   mongo-data:

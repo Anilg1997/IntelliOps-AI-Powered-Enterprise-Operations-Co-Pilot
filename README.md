@@ -202,7 +202,7 @@ intellops-platform/
 |-------|--------|-------------|
 | **Phase 1** | ✅ Complete | Order Service (REST + GraphQL + PostgreSQL + Kafka), Angular skeleton, CI |
 | **Phase 2** | ✅ Complete | Inventory Service (MongoDB + gRPC), product catalog, stock management, integration with Order Service |
-| **Phase 3** | 📋 Planned | AI Co-Pilot core: RAG + MCP server + chat UI |
+| **Phase 3** | ✅ Complete | AI Co-Pilot core: LangChain4j + Ollama, RAG over pgvector, MCP tools for Order/Inventory, SSE streaming chat UI |
 | **Phase 4** | 📋 Planned | Legacy Billing adapter (Oracle + SOAP), Kafka event pipeline |
 | **Phase 5** | 📋 Planned | Full agent orchestration, conversation memory, dashboards |
 | **Phase 6** | 📋 Planned | Dockerization, AWS deploy, polish docs & demo video |

@@ -1,0 +1,76 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: ai-copilot-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/intellops_order
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  data:
+    mongodb:
+      uri: mongodb://admin:Mongo%402024@localhost:27017/intellops_copilot?authSource=admin
+      auto-index-creation: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+# ─── AI / Ollama Configuration ─────────────────────────────────────────────
+intellops:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      model: llama3.1
+      temperature: 0.1
+      timeout: 120
+    rag:
+      embedding-model: llama3.1
+      embedding-dimensions: 768
+      table: intellops_embeddings
+
+logging:
+  level:
+    com.intellops: DEBUG
+    dev.langchain4j: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  flyway:
+    enabled: false
+
+  data:
+    mongodb:
+      uri: mongodb://admin:Mongo%402024@localhost:27017/intellops_copilot_test?authSource=admin
+
+intellops:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      model: llama3.1
+      temperature: 0.1
+      timeout: 5

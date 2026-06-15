@@ -10,5 +10,9 @@ export const routes: Routes = [
     path: 'orders/:orderNumber',
     loadComponent: () => import('./components/order-detail/order-detail.component').then(m => m.OrderDetailComponent)
   },
+  {
+    path: 'copilot',
+    loadComponent: () => import('./components/chat/chat.component').then(m => m.ChatComponent)
+  },
   { path: '**', redirectTo: '/orders' }
 ];
