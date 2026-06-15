@@ -432,19 +432,3 @@ intellops-platform/
 8. **Cloud-ready** — Docker Compose, CI/CD with GitHub Actions, AWS deployment ready (Phase 6)
 9. **Enterprise UX** — Order creation forms, toast notifications, system health monitoring, 404 error pages, responsive design
 10. **12 end-to-end screenshots** — Complete visual documentation of every page and flow
-
----
-
-## 👨‍💻 Author
-
-**Anil** — Senior Full Stack Developer
-
-Java | Spring Boot | Microservices | Angular | Kafka | Generative AI | RAG | Agent AI | Enterprise Architecture
-
-[![GitHub](https://img.shields.io/badge/GitHub-Anilg1997-181717?style=flat-square&logo=github)](https://github.com/Anilg1997)
-
----
-
-## 📄 License
-
-MIT — See [LICENSE](LICENSE) for details.
