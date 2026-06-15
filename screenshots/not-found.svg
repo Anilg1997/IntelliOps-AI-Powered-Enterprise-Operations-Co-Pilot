@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" font-family="'Segoe UI', -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/><stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="20" flood-opacity="0.15"/></filter>
+  </defs>
+  <rect width="1280" height="720" fill="url(#grad)" opacity="0.05"/>
+  <rect width="1280" height="720" fill="#f5f7fa"/>
+  <rect x="380" y="80" width="520" height="560" rx="20" fill="white" filter="url(#shadow)"/>
+  <text x="640" y="200" text-anchor="middle" font-size="120" font-weight="800" fill="url(#grad)">404</text>
+  <text x="640" y="260" text-anchor="middle" font-size="48">🔍</text>
+  <text x="640" y="310" text-anchor="middle" font-size="24" font-weight="700" fill="#1a1a2e">Page Not Found</text>
+  <text x="640" y="340" text-anchor="middle" font-size="14" fill="#666" width="400">The page you're looking for doesn't exist or has been moved. Please check the URL or navigate back.</text>
+  <rect x="460" y="370" width="180" height="44" rx="10" fill="url(#grad)"/>
+  <text x="550" y="397" text-anchor="middle" font-size="14" font-weight="600" fill="white">Go to Dashboard</text>
+  <rect x="660" y="370" width="160" height="44" rx="10" fill="white" stroke="#667eea" stroke-width="2"/>
+  <text x="740" y="397" text-anchor="middle" font-size="14" font-weight="600" fill="#667eea">View Orders</text>
+  <line x1="400" y1="440" x2="880" y2="440" stroke="#eee" stroke-width="1"/>
+  <text x="640" y="470" text-anchor="middle" font-size="13" fill="#888">Need help? Try these:</text>
+  <text x="540" y="500" font-size="13" fill="#667eea" font-weight="500">🤖 Ask AI Co-Pilot</text>
+  <text x="720" y="500" font-size="13" fill="#667eea" font-weight="500">🔐 Sign In</text>
+</svg>
