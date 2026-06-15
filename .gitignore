@@ -55,6 +55,11 @@ docker-compose.override.yml
 .env.local
 .env.*.local
 
+# H2 Database files (billing-service local dev)
+data/
+*.mv.db
+*.trace.db
+
 # IDE
 *.swp
 *.swo

@@ -1,5 +1,6 @@
 package com.intellops.copilot.config;
 
+import com.intellops.copilot.service.tools.BillingTool;
 import com.intellops.copilot.service.tools.InventoryTool;
 import com.intellops.copilot.service.tools.OrderTool;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -52,10 +53,11 @@ public class AiConfig {
     @Bean
     public Assistant assistant(ChatLanguageModel chatModel,
                                OrderTool orderTool,
-                               InventoryTool inventoryTool) {
+                               InventoryTool inventoryTool,
+                               BillingTool billingTool) {
         return AiServices.builder(Assistant.class)
                 .chatLanguageModel(chatModel)
-                .tools(orderTool, inventoryTool)
+                .tools(orderTool, inventoryTool, billingTool)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(20))
                 .build();
     }

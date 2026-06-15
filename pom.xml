@@ -23,6 +23,7 @@
         <module>order-service</module>
         <module>inventory-service</module>
         <module>ai-copilot-service</module>
+        <module>billing-service</module>
     </modules>
 
     <properties>

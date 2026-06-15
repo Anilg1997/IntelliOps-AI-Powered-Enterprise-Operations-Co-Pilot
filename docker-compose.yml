@@ -82,6 +82,25 @@ services:
       - "8082:8082"
       - "9091:9091"
 
+  oracle-xe:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: intellops-oracle
+    environment:
+      ORACLE_PASSWORD: Billing@2024
+      ORACLE_DATABASE: XEPDB1
+      APP_USER: INTELLOPS_BILLING
+      APP_USER_PASSWORD: Billing@2024
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "sqlplus", "-L", "INTELLOPS_BILLING/Billing@2024@localhost:1521/XEPDB1", "@/dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
   ai-copilot-service:
     image: eclipse-temurin:17-jre-alpine
     container_name: intellops-copilot
@@ -100,6 +119,27 @@ services:
     ports:
       - "8083:8083"
 
+  billing-service:
+    build:
+      context: ./billing-service
+      dockerfile: ../Dockerfile.billing
+    container_name: intellops-billing
+    depends_on:
+      oracle-xe:
+        condition: service_started
+      kafka:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-xe:1521/XEPDB1
+      SPRING_DATASOURCE_USERNAME: INTELLOPS_BILLING
+      SPRING_DATASOURCE_PASSWORD: Billing@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SERVER_PORT: 8084
+    ports:
+      - "8084:8084"
+
 volumes:
   postgres-data:
   mongo-data:
+  oracle-data:

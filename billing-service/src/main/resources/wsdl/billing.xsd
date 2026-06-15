@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://intellops.com/billing"
+           targetNamespace="http://intellops.com/billing"
+           elementFormDefault="qualified">
+
+    <!-- ─── Account Status ────────────────────────────────────────────── -->
+    <xs:simpleType name="accountStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="SUSPENDED"/>
+            <xs:enumeration value="CLOSED"/>
+            <xs:enumeration value="DELINQUENT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- ─── Invoice Status ─────────────────────────────────────────────── -->
+    <xs:simpleType name="invoiceStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PENDING"/>
+            <xs:enumeration value="PAID"/>
+            <xs:enumeration value="OVERDUE"/>
+            <xs:enumeration value="CANCELLED"/>
+            <xs:enumeration value="REFUNDED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- ─── Account Info ───────────────────────────────────────────────── -->
+    <xs:element name="getAccountDetailsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="accountNumber" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAccountDetailsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="accountNumber" type="xs:string"/>
+                <xs:element name="customerName" type="xs:string"/>
+                <xs:element name="customerEmail" type="xs:string"/>
+                <xs:element name="status" type="tns:accountStatus"/>
+                <xs:element name="balance" type="xs:decimal"/>
+                <xs:element name="creditLimit" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ─── Invoice Status ─────────────────────────────────────────────── -->
+    <xs:element name="getInvoiceStatusRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoiceNumber" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getInvoiceStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoiceNumber" type="xs:string"/>
+                <xs:element name="orderNumber" type="xs:string"/>
+                <xs:element name="status" type="tns:invoiceStatus"/>
+                <xs:element name="amount" type="xs:decimal"/>
+                <xs:element name="paidAmount" type="xs:decimal"/>
+                <xs:element name="dueDate" type="xs:date"/>
+                <xs:element name="customerEmail" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ─── Account Balance ────────────────────────────────────────────── -->
+    <xs:element name="getAccountBalanceRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="accountNumber" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAccountBalanceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="accountNumber" type="xs:string"/>
+                <xs:element name="balance" type="xs:decimal"/>
+                <xs:element name="creditLimit" type="xs:decimal"/>
+                <xs:element name="availableCredit" type="xs:decimal"/>
+                <xs:element name="status" type="tns:accountStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ─── Submit Payment ─────────────────────────────────────────────── -->
+    <xs:element name="submitPaymentRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoiceNumber" type="xs:string"/>
+                <xs:element name="amount" type="xs:decimal"/>
+                <xs:element name="paymentMethod" type="xs:string"/>
+                <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="submitPaymentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="paymentRef" type="xs:string"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="updatedBalance" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ─── Billing History ────────────────────────────────────────────── -->
+    <xs:element name="getBillingHistoryRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="accountNumber" type="xs:string"/>
+                <xs:element name="maxResults" type="xs:int" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getBillingHistoryResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="accountNumber" type="xs:string"/>
+                <xs:element name="entries" type="tns:billingHistoryEntry" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="billingHistoryEntry">
+        <xs:sequence>
+            <xs:element name="date" type="xs:date"/>
+            <xs:element name="type" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="reference" type="xs:string"/>
+            <xs:element name="amount" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
