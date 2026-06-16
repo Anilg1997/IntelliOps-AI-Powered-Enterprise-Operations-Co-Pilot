@@ -1,7 +1,8 @@
 package com.intellops.order.repository;
 
 import com.intellops.order.entity.Order;
-import com.intellops.order.entity.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,15 +13,24 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
     Optional<Order> findByOrderNumber(String orderNumber);
 
-    List<Order> findByCustomerIdOrderByCreatedAtDesc(Long customerId);
+    Page<Order> findByOrderNumberContainingOrStatusContaining(String orderNumber, String status, Pageable pageable);
 
-    List<Order> findByStatus(OrderStatus status);
+    List<Order> findByStatus(String status);
 
-    @Query("SELECT o FROM Order o JOIN FETCH o.customer JOIN FETCH o.lineItems li JOIN FETCH li.product WHERE o.orderNumber = :orderNumber")
-    Optional<Order> findFullOrderByOrderNumber(@Param("orderNumber") String orderNumber);
+    List<Order> findByCustomerId(Long customerId);
 
-    @Query("SELECT o FROM Order o JOIN FETCH o.customer LEFT JOIN FETCH o.lineItems WHERE o.id = :id")
-    Optional<Order> findFullOrderById(@Param("id") Long id);
+    @Query("SELECT COUNT(o) FROM Order o")
+    long countAll();
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = :status")
+    long countByStatus(@Param("status") String status);
+
+    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o")
+    java.math.BigDecimal sumTotalAmount();
+
+    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.status = 'DELIVERED'")
+    java.math.BigDecimal sumDeliveredAmount();
 }

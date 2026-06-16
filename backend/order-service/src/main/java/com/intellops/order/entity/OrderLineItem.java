@@ -1,10 +1,11 @@
 package com.intellops.order.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "order_line_items")
@@ -27,22 +28,20 @@ public class OrderLineItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Positive
     @Column(nullable = false)
     private Integer quantity;
 
-    @Positive
     @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(name = "subtotal", nullable = false, precision = 14, scale = 2)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotal;
 
-    @PrePersist
-    @PreUpdate
-    protected void calculateSubtotal() {
-        if (unitPrice != null && quantity != null) {
-            this.subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
-        }
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    public void calculateSubtotal() {
+        this.subtotal = this.unitPrice.multiply(BigDecimal.valueOf(this.quantity));
     }
 }

@@ -1,10 +1,11 @@
 package com.intellops.order.controller;
 
-import com.intellops.order.dto.ApiResponse;
-import com.intellops.order.dto.ProductDto;
+import com.intellops.order.dto.CreateProductRequest;
+import com.intellops.order.dto.OrderResponse;
 import com.intellops.order.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,27 +15,26 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
+@Slf4j
+@CrossOrigin
 public class ProductController {
 
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductDto.Response>> createProduct(
-            @Valid @RequestBody ProductDto.Request request) {
-        ProductDto.Response response = productService.createProduct(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response, "Product created successfully"));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductDto.Response>> getProduct(@PathVariable Long id) {
-        ProductDto.Response response = productService.getProduct(id);
-        return ResponseEntity.ok(ApiResponse.success(response));
+    public ResponseEntity<OrderResponse.ProductDto> createProduct(
+            @Valid @RequestBody CreateProductRequest request) {
+        OrderResponse.ProductDto product = productService.createProduct(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductDto.Response>>> getAllProducts() {
-        List<ProductDto.Response> products = productService.getAllProducts();
-        return ResponseEntity.ok(ApiResponse.success(products));
+    public ResponseEntity<List<OrderResponse.ProductDto>> listProducts() {
+        return ResponseEntity.ok(productService.listProducts());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponse.ProductDto> getProduct(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 }

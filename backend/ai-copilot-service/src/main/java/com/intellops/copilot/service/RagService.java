@@ -1,124 +1,82 @@
 package com.intellops.copilot.service;
 
-import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.store.embedding.EmbeddingStore;
+import com.intellops.copilot.model.DocumentChunk;
+import com.intellops.copilot.repository.DocumentChunkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.joining;
-
-/**
- * Retrieval-Augmented Generation service.
- * <p>
- * Provides two modes:
- * 1. <b>RAG from runbooks/FAQs</b> — retrieves relevant troubleshooting documents
- *    from the pgvector-powered embedding store.
- * 2. <b>Direct database query</b> — fallback to keyword search in runbooks/faqs
- *    tables when vector search is unavailable.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RagService {
 
-    private final EmbeddingModel embeddingModel;
-    private final EmbeddingStore<Embedding> embeddingStore;
-    private final JdbcTemplate jdbcTemplate;
+    private final DocumentChunkRepository documentChunkRepository;
 
-    /**
-     * Maximum number of documents to retrieve for RAG context.
-     */
-    private static final int TOP_K = 5;
+    @Value("${intellops.ai.rag.enabled:true}")
+    private boolean ragEnabled;
 
-    /**
-     * Retrieves relevant context from the vector store by embedding the query
-     * and performing similarity search.
-     */
-    public String retrieveContext(String query) {
+    public String retrieveRelevantContext(String query) {
+        if (!ragEnabled) {
+            return getDefaultContext();
+        }
+
         try {
-            // 1. Embed the user's question
-            dev.langchain4j.data.embedding.Embedding queryEmbedding = embeddingModel.embed(query).content();
+            // Simple text search fallback when pgvector embedding is not available
+            List<DocumentChunk> chunks = documentChunkRepository.findAll();
 
-            // 2. Search for relevant segments
-            List<Embedding> queryList = List.of(queryEmbedding);
-            List<String> relevantSegments = embeddingStore.findRelevant(queryEmbedding, TOP_K)
-                    .stream()
-                    .map(match -> match.embedded().text())
-                    .toList();
-
-            if (relevantSegments.isEmpty()) {
-                log.info("No relevant RAG context found for query, using keyword fallback");
-                return keywordSearch(query);
+            if (chunks.isEmpty()) {
+                return getDefaultContext();
             }
 
-            String context = relevantSegments.stream()
-                    .collect(joining("\n\n", "--- Relevant Knowledge Base ---\n", "\n--- End Knowledge Base ---"));
-            log.info("Retrieved {} relevant documents for RAG", relevantSegments.size());
-            return context;
+            // Simple relevance scoring based on keyword matching
+            List<String> queryWords = List.of(query.toLowerCase().split("\\s+"));
+
+            List<String> relevantChunks = chunks.stream()
+                    .filter(chunk -> {
+                        String text = chunk.getChunkText().toLowerCase();
+                        return queryWords.stream().anyMatch(text::contains);
+                    })
+                    .limit(5)
+                    .map(DocumentChunk::getChunkText)
+                    .collect(Collectors.toList());
+
+            if (relevantChunks.isEmpty()) {
+                return getDefaultContext();
+            }
+
+            return "Relevant documentation:\n" + String.join("\n---\n", relevantChunks);
         } catch (Exception e) {
-            log.warn("Vector search failed, using keyword fallback: {}", e.getMessage());
-            return keywordSearch(query);
+            log.warn("RAG retrieval failed, using default context: {}", e.getMessage());
+            return getDefaultContext();
         }
     }
 
-    /**
-     * Keyword-based fallback search on the runbooks and faqs tables.
-     */
-    private String keywordSearch(String query) {
-        StringBuilder context = new StringBuilder();
-        context.append("--- Knowledge Base (Keyword Search) ---\n");
-
-        try {
-            // Search runbooks
-            String runbookSql = """
-                    SELECT title, content FROM runbooks
-                    WHERE to_tsvector('english', title || ' ' || content) @@ plainto_tsquery('english', ?)
-                    LIMIT 3
-                    """;
-            jdbcTemplate.query(runbookSql, new Object[]{query}, (rs) -> {
-                context.append("📘 Runbook: ").append(rs.getString("title")).append("\n");
-                context.append(rs.getString("content")).append("\n\n");
-            });
-
-            // Search FAQs
-            String faqSql = """
-                    SELECT question, answer FROM faqs
-                    WHERE to_tsvector('english', question || ' ' || answer) @@ plainto_tsquery('english', ?)
-                    LIMIT 3
-                    """;
-            jdbcTemplate.query(faqSql, new Object[]{query}, (rs) -> {
-                context.append("❓ FAQ: ").append(rs.getString("question")).append("\n");
-                context.append("Answer: ").append(rs.getString("answer")).append("\n\n");
-            });
-        } catch (Exception e) {
-            log.warn("Keyword search also failed: {}", e.getMessage());
-            context.append("(Knowledge base search unavailable)");
-        }
-
-        context.append("--- End Knowledge Base ---\n");
-        return context.toString();
-    }
-
-    /**
-     * Indexes a document into the vector store for future RAG retrieval.
-     * Used during initialization to seed the knowledge base.
-     * Both the stored text and the embedding vector are derived from the same content.
-     */
-    public void indexDocument(String title, String content, String source) {
-        try {
-            String text = "Title: " + title + "\n" + content;
-            TextSegment segment = TextSegment.from(text);
-            dev.langchain4j.data.embedding.Embedding embedding = embeddingModel.embed(text).content();
-            embeddingStore.add(embedding, segment);
-            log.info("Indexed document: {} ({})", title, source);
-        } catch (Exception e) {
-            log.warn("Failed to index document '{}': {}", title, e.getMessage());
-        }
+    private String getDefaultContext() {
+        return """
+                Enterprise Operations Runbook:
+                
+                Order Status Codes:
+                - PENDING: Order received, awaiting confirmation
+                - CONFIRMED: Order confirmed, payment verified
+                - PROCESSING: Order is being prepared/fulfilled
+                - SHIPPED: Order has been shipped to customer
+                - DELIVERED: Order delivered successfully
+                - CANCELLED: Order was cancelled
+                
+                Common Issues:
+                - Stock Hold: Order held due to insufficient inventory
+                - Payment Pending: Awaiting payment confirmation
+                - Shipping Delay: Logistics delay, check with carrier
+                
+                Escalation Procedures:
+                - Orders stuck > 24 hours: Escalate to operations lead
+                - Payment disputes: Route to finance team
+                - Inventory discrepancies: Check with warehouse manager
+                """;
     }
 }

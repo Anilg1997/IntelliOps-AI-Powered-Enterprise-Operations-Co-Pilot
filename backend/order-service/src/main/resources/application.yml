@@ -1,7 +1,5 @@
 server:
   port: 8081
-  servlet:
-    context-path: /api
 
 spring:
   application:
@@ -13,8 +11,8 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
+      maximum-pool-size: 20
+      minimum-idle: 5
 
   jpa:
     hibernate:
@@ -22,68 +20,54 @@ spring:
     show-sql: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-        jdbc:
-          batch_size: 20
-        order_inserts: true
-    open-in-view: false
 
   flyway:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+    properties:
+      spring.json.trusted.packages: com.intellops.order.events
+
   graphql:
     graphiql:
       enabled: true
       path: /graphiql
+    path: /graphql
     schema:
       locations: classpath:graphql/
 
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.type.mapping: "event:java.util.Map"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080
 
-# gRPC client configuration for Inventory Service
-# Uses optimistic fallback — if inventory-service is down, orders proceed without stock validation
+jwt:
+  secret: IntelliOps-JWT-Secret-Key-2024-Enterprise-Operations-CoPilot-Super-Secret
+  issuer: intellops-platform
+
 grpc:
   client:
-    inventory-service:
-      address: static://localhost:9091
-      enable-keep-alive: true
-      negotiation-type: PLAINTEXT
+    inventoryGrpcService:
+      address: localhost:9091
+      negotiationType: PLAINTEXT
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
 
 logging:
   level:
     com.intellops: DEBUG
-    org.springframework.graphql: DEBUG
-
----
-spring:
-  config:
-    activate:
-      on-profile: test
-
-  datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: create-drop
-
-  flyway:
-    enabled: false
-
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    net.devh: DEBUG

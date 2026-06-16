@@ -1,89 +1,90 @@
 package com.intellops.auth.service;
 
 import com.intellops.auth.dto.*;
-import com.intellops.auth.entity.Role;
 import com.intellops.auth.entity.User;
-import com.intellops.auth.exception.DuplicateResourceException;
 import com.intellops.auth.repository.UserRepository;
 import com.intellops.auth.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
+    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider tokenProvider;
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateResourceException("Email already registered: " + request.getEmail());
+            throw new RuntimeException("Email already registered: " + request.getEmail());
         }
 
         User user = User.builder()
-                .email(request.getEmail().toLowerCase().trim())
+                .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .fullName(request.getFullName())
-                .phoneNumber(request.getPhoneNumber())
-                .role(Role.ROLE_USER)
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .role("USER")
                 .enabled(true)
                 .build();
 
         user = userRepository.save(user);
-        return buildAuthResponse(user);
+        log.info("User registered successfully: {}", user.getEmail());
+
+        String token = tokenProvider.generateToken(user.getEmail());
+        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail());
+
+        return AuthResponse.of(token, refreshToken, tokenProvider.getJwtExpiration(), UserDto.from(user));
     }
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail().toLowerCase().trim())
-                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid email or password");
-        }
+        String token = tokenProvider.generateToken(authentication);
+        String refreshToken = tokenProvider.generateRefreshToken(request.getEmail());
 
-        if (!user.isEnabled()) {
-            throw new BadCredentialsException("Account is disabled");
-        }
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return buildAuthResponse(user);
+        log.info("User logged in successfully: {}", request.getEmail());
+
+        return AuthResponse.of(token, refreshToken, tokenProvider.getJwtExpiration(), UserDto.from(user));
     }
 
-    public UserProfile getProfileByEmail(String email) {
+    public AuthResponse refreshToken(RefreshTokenRequest request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (!tokenProvider.validateToken(refreshToken) || !tokenProvider.isRefreshToken(refreshToken)) {
+            throw new RuntimeException("Invalid refresh token");
+        }
+
+        String email = tokenProvider.getEmailFromToken(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String newToken = tokenProvider.generateToken(email);
+        String newRefreshToken = tokenProvider.generateRefreshToken(email);
+
+        log.info("Token refreshed for user: {}", email);
+
+        return AuthResponse.of(newToken, newRefreshToken, tokenProvider.getJwtExpiration(), UserDto.from(user));
+    }
+
+    public UserDto getCurrentUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-
-        return UserProfile.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .phoneNumber(user.getPhoneNumber())
-                .role(user.getRole().name())
-                .createdAt(user.getCreatedAt().toString())
-                .build();
-    }
-
-    private AuthResponse buildAuthResponse(User user) {
-        String token = jwtTokenProvider.generateToken(
-                user.getId(), user.getEmail(), user.getRole().name());
-
-        UserProfile profile = UserProfile.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .phoneNumber(user.getPhoneNumber())
-                .role(user.getRole().name())
-                .createdAt(user.getCreatedAt().toString())
-                .build();
-
-        return AuthResponse.builder()
-                .token(token)
-                .tokenType("Bearer")
-                .expiresIn(jwtTokenProvider.getExpirationMs())
-                .user(profile)
-                .build();
+        return UserDto.from(user);
     }
 }

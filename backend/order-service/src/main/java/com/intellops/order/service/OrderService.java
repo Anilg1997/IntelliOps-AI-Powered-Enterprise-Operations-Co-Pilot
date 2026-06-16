@@ -1,21 +1,25 @@
 package com.intellops.order.service;
 
-import com.intellops.order.config.OrderEventPublisher;
-import com.intellops.order.dto.OrderDto;
-import com.intellops.order.entity.*;
-import com.intellops.order.exception.ResourceNotFoundException;
-import com.intellops.order.grpc.StockServiceClient;
+import com.intellops.order.dto.CreateOrderRequest;
+import com.intellops.order.dto.OrderResponse;
+import com.intellops.order.dto.UpdateOrderStatusRequest;
+import com.intellops.order.entity.Customer;
+import com.intellops.order.entity.Order;
+import com.intellops.order.entity.OrderLineItem;
+import com.intellops.order.entity.Product;
+import com.intellops.order.events.OrderEventPublisher;
 import com.intellops.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,157 +30,141 @@ public class OrderService {
     private final CustomerService customerService;
     private final ProductService productService;
     private final OrderEventPublisher eventPublisher;
-    private final StockServiceClient stockServiceClient;
-    private static final DateTimeFormatter DTF = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    private static final DateTimeFormatter ORDER_DATE_FMT = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Transactional
-    public OrderDto.Response createOrder(OrderDto.CreateRequest request) {
-        Customer customer = customerService.getCustomerEntityByEmail(request.getCustomerEmail());
+    public OrderResponse createOrder(CreateOrderRequest request) {
+        Customer customer = customerService.getCustomerEntity(request.getCustomerId());
 
         Order order = Order.builder()
                 .orderNumber(generateOrderNumber())
-                .status(OrderStatus.PENDING)
                 .customer(customer)
-                .totalAmount(BigDecimal.ZERO)
+                .status("PENDING")
+                .notes(request.getNotes())
                 .build();
 
-        BigDecimal total = BigDecimal.ZERO;
-        boolean stockCheckFailed = false;
-        StringBuilder stockWarnings = new StringBuilder();
-
-        for (OrderDto.LineItemRequest itemReq : request.getLineItems()) {
-            Product product = productService.getProductEntityBySku(itemReq.getProductSku());
-            BigDecimal subtotal = product.getPrice().multiply(BigDecimal.valueOf(itemReq.getQuantity()));
-            total = total.add(subtotal);
-
-            // Check stock availability via gRPC (Inventory Service)
-            StockServiceClient.StockCheckResult stockResult =
-                    stockServiceClient.checkStock(itemReq.getProductSku(), itemReq.getQuantity());
-
-            if (!stockResult.isAvailable()) {
-                stockCheckFailed = true;
-                String warning = String.format("Insufficient stock for '%s' (SKU: %s): requested %d, available %d. ETA: %s",
-                        product.getName(), itemReq.getProductSku(), itemReq.getQuantity(),
-                        stockResult.getAvailableQuantity(),
-                        stockResult.getEstimatedRestockDate().isEmpty() ? "unknown" : stockResult.getEstimatedRestockDate());
-                stockWarnings.append(warning).append("; ");
-                log.warn("{}", warning);
-            } else {
-                // Reserve stock in inventory
-                stockServiceClient.reserveStock(itemReq.getProductSku(), itemReq.getQuantity(), order.getOrderNumber());
-            }
+        for (CreateOrderRequest.LineItemRequest lineItemReq : request.getLineItems()) {
+            Product product = productService.getProductEntity(lineItemReq.getProductId());
 
             OrderLineItem lineItem = OrderLineItem.builder()
-                    .order(order)
                     .product(product)
-                    .quantity(itemReq.getQuantity())
+                    .quantity(lineItemReq.getQuantity())
                     .unitPrice(product.getPrice())
-                    .subtotal(subtotal)
                     .build();
-            order.getLineItems().add(lineItem);
+            lineItem.calculateSubtotal();
+
+            order.addLineItem(lineItem);
         }
 
-        // If stock check failed, put order on hold with reason
-        if (stockCheckFailed) {
-            order.setStatus(OrderStatus.ON_HOLD);
-            order.setStatusReason("STOCK_HOLD: " + stockWarnings.toString());
-        }
-
-        order.setTotalAmount(total);
+        order.calculateTotals();
         order = orderRepository.save(order);
-        log.info("Created order: {} for customer: {} (total: ₹{}, status: {})",
-                order.getOrderNumber(), customer.getEmail(), total, order.getStatus());
 
-        // Publish Kafka event for the notification/activity service
-        eventPublisher.publishOrderCreated(order);
+        eventPublisher.publishOrderCreated(order.getOrderNumber(), customer.getCustomerNumber());
 
-        if (stockCheckFailed) {
-            eventPublisher.publishOrderStatusChanged(order, OrderStatus.PENDING);
+        log.info("Order created: {} for customer: {}", order.getOrderNumber(), customer.getCustomerNumber());
+        return toResponse(order);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponse getOrder(String orderNumber) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderNumber));
+        return toResponse(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderResponse> listOrders(int page, int size, String search) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Order> orders;
+        if (search != null && !search.isEmpty()) {
+            orders = orderRepository.findByOrderNumberContainingOrStatusContaining(search, search, pageable);
+        } else {
+            orders = orderRepository.findAll(pageable);
         }
 
-        return toFullResponse(order);
-    }
-
-    public OrderDto.Response getOrderByNumber(String orderNumber) {
-        Order order = orderRepository.findFullOrderByOrderNumber(orderNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderNumber", orderNumber));
-        return toFullResponse(order);
-    }
-
-    public List<OrderDto.Response> getOrdersByCustomer(Long customerId) {
-        return orderRepository.findByCustomerIdOrderByCreatedAtDesc(customerId).stream()
-                .map(this::toBasicResponse)
-                .toList();
-    }
-
-    public List<OrderDto.Response> getAllOrders() {
-        return orderRepository.findAll().stream()
-                .map(this::toBasicResponse)
-                .toList();
+        return orders.map(this::toResponse);
     }
 
     @Transactional
-    public OrderDto.Response updateOrderStatus(String orderNumber, OrderDto.StatusUpdateRequest request) {
+    public OrderResponse updateOrderStatus(String orderNumber, UpdateOrderStatusRequest request) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderNumber", orderNumber));
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderNumber));
 
-        OrderStatus oldStatus = order.getStatus();
-        OrderStatus newStatus;
-        try {
-            newStatus = OrderStatus.valueOf(request.getNewStatus().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid status: " + request.getNewStatus()
-                    + ". Valid values: PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, ON_HOLD, CANCELLED, REFUNDED");
-        }
+        String oldStatus = order.getStatus();
+        String newStatus = request.getStatus().toUpperCase();
+
+        validateStatusTransition(oldStatus, newStatus);
 
         order.setStatus(newStatus);
-        order.setStatusReason(request.getReason());
         order = orderRepository.save(order);
-        log.info("Order {} status updated: {} -> {} (reason: {})",
-                orderNumber, oldStatus, newStatus, request.getReason());
 
-        // Publish status change event
-        eventPublisher.publishOrderStatusChanged(order, oldStatus);
+        eventPublisher.publishOrderStatusChanged(orderNumber, oldStatus, newStatus);
 
-        // If the status change indicates a payment failure, publish that event too
-        if (newStatus == OrderStatus.ON_HOLD && "PAYMENT_FAILED".equalsIgnoreCase(request.getReason())) {
-            eventPublisher.publishPaymentFailed(order);
+        log.info("Order {} status changed from {} to {}", orderNumber, oldStatus, newStatus);
+        return toResponse(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getOrderStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalOrders", orderRepository.countAll());
+        stats.put("pendingOrders", orderRepository.countByStatus("PENDING"));
+        stats.put("confirmedOrders", orderRepository.countByStatus("CONFIRMED"));
+        stats.put("processingOrders", orderRepository.countByStatus("PROCESSING"));
+        stats.put("shippedOrders", orderRepository.countByStatus("SHIPPED"));
+        stats.put("deliveredOrders", orderRepository.countByStatus("DELIVERED"));
+        stats.put("totalRevenue", orderRepository.sumTotalAmount());
+        stats.put("deliveredRevenue", orderRepository.sumDeliveredAmount());
+        return stats;
+    }
+
+    private void validateStatusTransition(String currentStatus, String newStatus) {
+        Map<String, List<String>> validTransitions = Map.of(
+                "PENDING", List.of("CONFIRMED", "CANCELLED"),
+                "CONFIRMED", List.of("PROCESSING", "CANCELLED"),
+                "PROCESSING", List.of("SHIPPED", "CANCELLED"),
+                "SHIPPED", List.of("DELIVERED"),
+                "DELIVERED", List.of(),
+                "CANCELLED", List.of()
+        );
+
+        List<String> allowed = validTransitions.getOrDefault(currentStatus, List.of());
+        if (!allowed.contains(newStatus)) {
+            throw new RuntimeException(
+                    String.format("Invalid status transition from %s to %s", currentStatus, newStatus));
         }
-
-        return toFullResponse(order);
     }
 
     private String generateOrderNumber() {
-        return "ORD-" + LocalDateTime.now().format(ORDER_DATE_FMT)
-                + "-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        String date = java.time.LocalDate.now().toString().replace("-", "");
+        String random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        return "ORD-" + date + "-" + random;
     }
 
-    private OrderDto.Response toFullResponse(Order order) {
-        OrderDto.Response response = toBasicResponse(order);
-        response.setLineItems(order.getLineItems().stream()
-                .map(this::toLineItemResponse)
-                .toList());
+    public OrderResponse toResponse(Order order) {
+        OrderResponse response = OrderResponse.builder()
+                .id(order.getId())
+                .orderNumber(order.getOrderNumber())
+                .status(order.getStatus())
+                .totalAmount(order.getTotalAmount())
+                .taxAmount(order.getTaxAmount())
+                .notes(order.getNotes())
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
+                .lineItems(order.getLineItems().stream().map(this::toLineItemDto).collect(Collectors.toList()))
+                .build();
+
+        if (order.getCustomer() != null) {
+            response.setCustomer(customerService.toDto(order.getCustomer()));
+        }
+
         return response;
     }
 
-    private OrderDto.Response toBasicResponse(Order order) {
-        return OrderDto.Response.builder()
-                .id(order.getId())
-                .orderNumber(order.getOrderNumber())
-                .status(order.getStatus().name())
-                .statusReason(order.getStatusReason())
-                .totalAmount(order.getTotalAmount())
-                .customer(customerService.getCustomer(order.getCustomer().getId()))
-                .createdAt(order.getCreatedAt() != null ? order.getCreatedAt().format(DTF) : null)
-                .updatedAt(order.getUpdatedAt() != null ? order.getUpdatedAt().format(DTF) : null)
-                .build();
-    }
-
-    private OrderDto.LineItemResponse toLineItemResponse(OrderLineItem item) {
-        return OrderDto.LineItemResponse.builder()
+    private OrderResponse.LineItemDto toLineItemDto(OrderLineItem item) {
+        return OrderResponse.LineItemDto.builder()
                 .id(item.getId())
-                .product(productService.getProduct(item.getProduct().getId()))
+                .product(productService.toDto(item.getProduct()))
                 .quantity(item.getQuantity())
                 .unitPrice(item.getUnitPrice())
                 .subtotal(item.getSubtotal())

@@ -1,164 +1,100 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
-interface ServiceStatus {
+interface ServiceHealth {
   name: string;
-  version: string;
-  status: 'operational' | 'degraded' | 'down';
-  uptime: string;
   port: number;
-  type: string;
+  url: string;
+  status: 'UP' | 'DOWN' | 'CHECKING';
+  icon: string;
 }
 
 @Component({
   selector: 'app-health',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   template: `
-    <div class="health-container">
+    <div class="page animate-fadeIn">
       <div class="page-header">
         <div>
-          <h1>🔧 System Health</h1>
-          <p class="subtitle">Monitor the status of all IntelliOps microservices</p>
+          <h1><i class="fas fa-heartbeat"></i> System Health</h1>
+          <p>Real-time monitoring of all microservices</p>
         </div>
-        <div class="overall-status" [class]="overallStatus">
-          <span class="status-dot"></span>
-          <span>All Systems {{ overallStatus === 'operational' ? 'Operational' : 'Degraded' }}</span>
+        <button class="btn btn-secondary" (click)="checkAll()"><i class="fas fa-sync-alt"></i> Refresh</button>
+      </div>
+
+      <div class="health-grid">
+        <div class="health-card" *ngFor="let svc of services" [ngClass]="svc.status.toLowerCase()">
+          <div class="status-indicator" [ngClass]="svc.status.toLowerCase()"></div>
+          <div class="svc-info">
+            <h3><i [class]="svc.icon"></i> {{ svc.name }}</h3>
+            <p>Port {{ svc.port }}</p>
+          </div>
+          <span class="status-badge" [ngClass]="svc.status.toLowerCase()">
+            <i [class]="svc.status === 'UP' ? 'fas fa-check-circle' : svc.status === 'DOWN' ? 'fas fa-times-circle' : 'fas fa-spinner fa-spin'"></i>
+            {{ svc.status }}
+          </span>
         </div>
       </div>
 
-      <!-- Services Grid -->
-      <div class="services-grid">
-        <div class="service-card" *ngFor="let service of services">
-          <div class="service-header">
-            <div class="service-icon">{{ getIcon(service.type) }}</div>
-            <div class="service-info">
-              <span class="service-name">{{ service.name }}</span>
-              <span class="service-type">{{ service.type }}</span>
-            </div>
-            <span class="service-status" [class]="service.status">
-              <span class="status-dot"></span>
-              {{ service.status }}
-            </span>
-          </div>
-          <div class="service-details">
-            <div class="detail-row">
-              <span>Version</span>
-              <span>{{ service.version }}</span>
-            </div>
-            <div class="detail-row">
-              <span>Port</span>
-              <span>{{ service.port }}</span>
-            </div>
-            <div class="detail-row">
-              <span>Uptime</span>
-              <span>{{ service.uptime }}</span>
-            </div>
-          </div>
-          <div class="service-bar">
-            <div class="bar-fill" [style.width.%]="service.status === 'operational' ? 100 : service.status === 'degraded' ? 60 : 0"></div>
-          </div>
+      <div class="card" style="margin-top: 2rem;">
+        <h3><i class="fas fa-info-circle"></i> Infrastructure</h3>
+        <div class="infra-grid">
+          <div class="infra-item"><i class="fas fa-database" style="color: #336791;"></i><span>PostgreSQL 16</span><span class="port">:5432</span></div>
+          <div class="infra-item"><i class="fas fa-database" style="color: #47A248;"></i><span>MongoDB 7</span><span class="port">:27017</span></div>
+          <div class="infra-item"><i class="fas fa-database" style="color: #F80000;"></i><span>Oracle XE</span><span class="port">:1521</span></div>
+          <div class="infra-item"><i class="fas fa-stream" style="color: #231F20;"></i><span>Apache Kafka</span><span class="port">:9092</span></div>
+          <div class="infra-item"><i class="fas fa-brain" style="color: #000;"></i><span>Ollama (LLM)</span><span class="port">:11434</span></div>
         </div>
-      </div>
-
-      <!-- Quick Stats -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <span class="stat-value" style="color:#4caf50">{{ getOperationalCount() }}</span>
-          <span class="stat-label">Operational</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-value" style="color:#ff9800">{{ getDegradedCount() }}</span>
-          <span class="stat-label">Degraded</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-value" style="color:#f44336">{{ getDownCount() }}</span>
-          <span class="stat-label">Down</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-value" style="color:#1a237e">{{ services.length }}</span>
-          <span class="stat-label">Total Services</span>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <a routerLink="/dashboard" class="action-btn">📊 Dashboard</a>
-        <a routerLink="/orders" class="action-btn">📋 Orders</a>
-        <a routerLink="/copilot" class="action-btn">🤖 AI Co-Pilot</a>
       </div>
     </div>
   `,
   styles: [`
-    .health-container { padding: 24px; max-width: 1200px; margin: 0 auto; }
-    .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-    h1 { margin: 0; font-size: 24px; color: #1a1a2e; font-weight: 700; }
-    .subtitle { margin: 4px 0 0; font-size: 13px; color: #888; }
-    .overall-status { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; }
-    .overall-status.operational { background: #e8f5e9; color: #2e7d32; }
-    .overall-status.degraded { background: #fff3e0; color: #f57c00; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .operational .status-dot { background: #4caf50; box-shadow: 0 0 6px rgba(76,175,80,0.5); }
-    .degraded .status-dot { background: #ff9800; }
-    .down .status-dot { background: #f44336; }
-
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .service-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .service-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .service-icon { font-size: 28px; }
-    .service-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-    .service-name { font-size: 14px; font-weight: 600; color: #333; }
-    .service-type { font-size: 11px; color: #999; }
-    .service-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 10px; text-transform: capitalize; }
-    .service-status.operational { background: #e8f5e9; color: #2e7d32; }
-    .service-status.degraded { background: #fff3e0; color: #f57c00; }
-    .service-status.down { background: #fef2f2; color: #d32f2f; }
-    .service-details { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-    .detail-row { display: flex; justify-content: space-between; font-size: 13px; }
-    .detail-row span:first-child { color: #888; }
-    .detail-row span:last-child { color: #333; font-weight: 500; }
-    .service-bar { height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden; }
-    .bar-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #66bb6a); border-radius: 2px; transition: width 1s ease; }
-
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: white; padding: 16px; border-radius: 12px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .stat-value { display: block; font-size: 28px; font-weight: 700; }
-    .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
-
-    .quick-actions { display: flex; gap: 12px; }
-    .action-btn {
-      padding: 10px 20px; background: white; border: 1px solid #e0e0e0; border-radius: 8px;
-      text-decoration: none; font-size: 13px; color: #555; transition: all 0.2s;
-    }
-    .action-btn:hover { border-color: #667eea; color: #667eea; }
-
-    @media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+    .page-header p { color: var(--gray-500); font-size: 0.875rem; }
+    .health-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .health-card { display: flex; align-items: center; gap: 1rem; background: white; padding: 1.25rem; border-radius: var(--radius); box-shadow: var(--shadow); border-left: 4px solid var(--gray-300);
+      &.up { border-left-color: var(--success); }
+      &.down { border-left-color: var(--danger); }
+      &.checking { border-left-color: var(--warning); } }
+    .status-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--gray-300);
+      &.up { background: var(--success); box-shadow: 0 0 8px rgba(16,185,129,0.4); }
+      &.down { background: var(--danger); }
+      &.checking { background: var(--warning); animation: pulse 1.5s infinite; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .svc-info { flex: 1; h3 { font-size: 0.9375rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; } p { font-size: 0.8125rem; color: var(--gray-500); } }
+    .status-badge { display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;
+      &.up { background: #d1fae5; color: #065f46; }
+      &.down { background: #fee2e2; color: #991b1b; }
+      &.checking { background: #fef3c7; color: #92400e; } }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700); }
+    .infra-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; }
+    .infra-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--gray-50); border-radius: var(--radius); font-size: 0.875rem;
+      .port { font-family: monospace; color: var(--gray-500); font-size: 0.8125rem; } }
   `]
 })
-export class HealthComponent {
-  overallStatus: 'operational' | 'degraded' = 'operational';
-
-  services: ServiceStatus[] = [
-    { name: 'Auth Service', version: '1.0.0', status: 'operational', uptime: '14d 6h', port: 8080, type: 'Spring Boot' },
-    { name: 'Order Service', version: '1.0.0', status: 'operational', uptime: '14d 6h', port: 8081, type: 'Spring Boot' },
-    { name: 'Inventory Service', version: '1.0.0', status: 'operational', uptime: '14d 6h', port: 8082, type: 'Spring Boot' },
-    { name: 'AI Co-Pilot', version: '1.0.0', status: 'operational', uptime: '14d 6h', port: 8083, type: 'Spring Boot' },
-    { name: 'Billing Service', version: '1.0.0', status: 'operational', uptime: '14d 6h', port: 8084, type: 'Spring Boot' },
-    { name: 'PostgreSQL', version: '16', status: 'operational', uptime: '14d 6h', port: 5432, type: 'Database' },
-    { name: 'MongoDB', version: '7.0', status: 'operational', uptime: '14d 6h', port: 27017, type: 'Database' },
-    { name: 'Apache Kafka', version: '7.6.0', status: 'operational', uptime: '14d 6h', port: 9092, type: 'Message Queue' },
-    { name: 'Ollama (AI)', version: 'llama3.1', status: 'operational', uptime: '14d 6h', port: 11434, type: 'AI Model' },
+export class HealthComponent implements OnInit {
+  services: ServiceHealth[] = [
+    { name: 'Auth Service', port: 8080, url: 'http://localhost:8080/api/actuator/health', status: 'CHECKING', icon: 'fas fa-shield-alt' },
+    { name: 'Order Service', port: 8081, url: 'http://localhost:8081/api/actuator/health', status: 'CHECKING', icon: 'fas fa-receipt' },
+    { name: 'Inventory Service', port: 8082, url: 'http://localhost:8082/api/actuator/health', status: 'CHECKING', icon: 'fas fa-boxes-stacked' },
+    { name: 'AI Co-Pilot', port: 8083, url: 'http://localhost:8083/api/v1/copilot/health', status: 'CHECKING', icon: 'fas fa-robot' },
+    { name: 'Billing Service', port: 8084, url: 'http://localhost:8084/api/actuator/health', status: 'CHECKING', icon: 'fas fa-file-invoice-dollar' },
   ];
 
-  getIcon(type: string): string {
-    const icons: Record<string, string> = {
-      'Spring Boot': '🌱', 'Database': '🗄️', 'Message Queue': '📨', 'AI Model': '🤖'
-    };
-    return icons[type] || '🔧';
-  }
+  constructor(private http: HttpClient) {}
 
-  getOperationalCount(): number { return this.services.filter(s => s.status === 'operational').length; }
-  getDegradedCount(): number { return this.services.filter(s => s.status === 'degraded').length; }
-  getDownCount(): number { return this.services.filter(s => s.status === 'down').length; }
+  ngOnInit() { this.checkAll(); }
+
+  checkAll() {
+    this.services.forEach(svc => {
+      svc.status = 'CHECKING';
+      this.http.get(svc.url, { responseType: 'text' }).subscribe({
+        next: () => svc.status = 'UP',
+        error: () => svc.status = 'DOWN'
+      });
+    });
+  }
 }

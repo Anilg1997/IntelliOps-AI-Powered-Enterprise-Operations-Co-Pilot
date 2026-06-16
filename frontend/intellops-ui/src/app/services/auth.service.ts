@@ -1,98 +1,82 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
-export interface UserProfile {
+export interface User {
   id: number;
   email: string;
+  firstName: string;
+  lastName: string;
   fullName: string;
-  phoneNumber: string;
   role: string;
-  createdAt: string;
 }
 
 export interface AuthResponse {
   token: string;
+  refreshToken: string;
   tokenType: string;
   expiresIn: number;
-  user: UserProfile;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
+  user: User;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api/auth';
-  private readonly TOKEN_KEY = 'intellops_token';
+  private readonly API_URL = '/api/auth';
+  private currentUser = signal<User | null>(null);
 
-  private userSignal = signal<UserProfile | null>(null);
-  user = this.userSignal.asReadonly();
-  isAuthenticated = computed(() => this.userSignal() !== null);
+  user = this.currentUser.asReadonly();
+  isAuthenticated = computed(() => !!this.getToken());
 
-  constructor(private http: HttpClient) {
-    this.loadUserFromToken();
+  constructor(private http: HttpClient, private router: Router) {
+    this.loadStoredUser();
   }
 
-  register(email: string, password: string, fullName: string, phoneNumber?: string): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(`${this.API_URL}/register`, {
-      email, password, fullName, phoneNumber
-    }).pipe(
-      tap(res => this.handleAuthResponse(res.data))
-    );
-  }
-
-  login(email: string, password: string): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(`${this.API_URL}/login`, {
-      email, password
-    }).pipe(
-      tap(res => this.handleAuthResponse(res.data))
-    );
-  }
-
-  getProfile(): Observable<ApiResponse<UserProfile>> {
-    return this.http.get<ApiResponse<UserProfile>>(`${this.API_URL}/me`);
-  }
-
-  logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    this.userSignal.set(null);
+  private loadStoredUser(): void {
+    const userJson = localStorage.getItem('intellops_user');
+    if (userJson) {
+      try {
+        this.currentUser.set(JSON.parse(userJson));
+      } catch {
+        localStorage.removeItem('intellops_user');
+      }
+    }
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem('intellops_token');
   }
 
-  private handleAuthResponse(response: AuthResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, response.token);
-    this.userSignal.set(response.user);
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, { email, password })
+      .pipe(tap(res => this.handleAuthResponse(res)));
   }
 
-  private loadUserFromToken(): void {
-    const token = this.getToken();
-    if (token) {
-      // Decode JWT to get basic user info without server call
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        this.userSignal.set({
-          id: parseInt(payload.sub),
-          email: payload.email,
-          fullName: payload.email?.split('@')[0] || 'User',
-          phoneNumber: '',
-          role: payload.role?.replace('ROLE_', '') || 'USER',
-          createdAt: ''
-        });
-        // Refresh profile from server
-        this.getProfile().subscribe({
-          next: (res) => this.userSignal.set(res.data),
-          error: () => this.logout()
-        });
-      } catch {
-        this.logout();
-      }
-    }
+  register(data: { email: string; password: string; firstName: string; lastName: string }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, data)
+      .pipe(tap(res => this.handleAuthResponse(res)));
+  }
+
+  logout(): void {
+    localStorage.removeItem('intellops_token');
+    localStorage.removeItem('intellops_refresh_token');
+    localStorage.removeItem('intellops_user');
+    this.currentUser.set(null);
+    this.router.navigate(['/login']);
+  }
+
+  getProfile(): Observable<User> {
+    return this.http.get<User>(`${this.API_URL}/me`)
+      .pipe(tap(user => {
+        this.currentUser.set(user);
+        localStorage.setItem('intellops_user', JSON.stringify(user));
+      }));
+  }
+
+  private handleAuthResponse(res: AuthResponse): void {
+    localStorage.setItem('intellops_token', res.token);
+    localStorage.setItem('intellops_refresh_token', res.refreshToken);
+    localStorage.setItem('intellops_user', JSON.stringify(res.user));
+    this.currentUser.set(res.user);
   }
 }

@@ -1,20 +1,17 @@
 package com.intellops.order.service;
 
-import com.intellops.order.dto.CustomerDto;
-import com.intellops.order.dto.ProductDto;
+import com.intellops.order.dto.CreateCustomerRequest;
+import com.intellops.order.dto.OrderResponse;
 import com.intellops.order.entity.Customer;
-import com.intellops.order.entity.Product;
-import com.intellops.order.exception.DuplicateResourceException;
-import com.intellops.order.exception.ResourceNotFoundException;
 import com.intellops.order.repository.CustomerRepository;
-import com.intellops.order.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,61 +19,50 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private static final DateTimeFormatter DTF = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @Transactional
-    public CustomerDto.Response createCustomer(CustomerDto.Request request) {
-        if (customerRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateResourceException("Customer already exists with email: " + request.getEmail());
-        }
+    public OrderResponse.CustomerDto createCustomer(CreateCustomerRequest request) {
         Customer customer = Customer.builder()
+                .customerNumber("CUST-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .name(request.getName())
                 .email(request.getEmail())
-                .phoneNumber(request.getPhoneNumber())
+                .phone(request.getPhone())
                 .address(request.getAddress())
                 .build();
+
         customer = customerRepository.save(customer);
-        log.info("Created customer: {} ({})", customer.getName(), customer.getEmail());
-        return toResponse(customer);
+        log.info("Customer created: {}", customer.getCustomerNumber());
+
+        return toDto(customer);
     }
 
-    public CustomerDto.Response getCustomer(Long id) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", id));
-        return toResponse(customer);
-    }
-
-    public CustomerDto.Response getCustomerByEmail(String email) {
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer", "email", email));
-        return toResponse(customer);
-    }
-
-    public List<CustomerDto.Response> getAllCustomers() {
+    @Transactional(readOnly = true)
+    public List<OrderResponse.CustomerDto> listCustomers() {
         return customerRepository.findAll().stream()
-                .map(this::toResponse)
-                .toList();
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public OrderResponse.CustomerDto getCustomerById(Long id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+        return toDto(customer);
+    }
+
+    @Transactional(readOnly = true)
     public Customer getCustomerEntity(Long id) {
         return customerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", id));
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
     }
 
-    public Customer getCustomerEntityByEmail(String email) {
-        return customerRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer", "email", email));
-    }
-
-    private CustomerDto.Response toResponse(Customer c) {
-        return CustomerDto.Response.builder()
-                .id(c.getId())
-                .name(c.getName())
-                .email(c.getEmail())
-                .phoneNumber(c.getPhoneNumber())
-                .address(c.getAddress())
-                .createdAt(c.getCreatedAt() != null ? c.getCreatedAt().format(DTF) : null)
-                .updatedAt(c.getUpdatedAt() != null ? c.getUpdatedAt().format(DTF) : null)
+    public OrderResponse.CustomerDto toDto(Customer customer) {
+        return OrderResponse.CustomerDto.builder()
+                .id(customer.getId())
+                .customerNumber(customer.getCustomerNumber())
+                .name(customer.getName())
+                .email(customer.getEmail())
+                .phone(customer.getPhone())
                 .build();
     }
 }

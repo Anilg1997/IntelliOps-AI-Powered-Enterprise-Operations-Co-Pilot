@@ -1,9 +1,9 @@
 package com.intellops.billing.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,57 +22,53 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column(name = "invoice_number", nullable = false, unique = true)
+    @Column(name = "invoice_number", nullable = false, unique = true, length = 50)
     private String invoiceNumber;
 
-    @NotBlank
-    @Column(name = "order_number", nullable = false)
+    @Column(name = "order_number", nullable = false, length = 50)
     private String orderNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", nullable = false)
-    private BillingAccount account;
+    @Column(name = "customer_name", length = 255)
+    private String customerName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private InvoiceStatus status;
+    @Column(name = "customer_email", length = 255)
+    private String customerEmail;
 
-    @Column(name = "amount", nullable = false, precision = 14, scale = 2)
-    private BigDecimal amount;
+    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
+    private BigDecimal totalAmount;
 
-    @Column(name = "paid_amount", precision = 14, scale = 2)
-    private BigDecimal paidAmount;
+    @Column(name = "tax_amount", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal taxAmount = BigDecimal.ZERO;
 
-    @Column(name = "due_date", nullable = false)
+    @Column(nullable = false, length = 30)
+    @Builder.Default
+    private String status = "PENDING";
+
+    @Column(name = "payment_status", length = 30)
+    @Builder.Default
+    private String paymentStatus = "PENDING";
+
+    @Column(name = "payment_method", length = 50)
+    private String paymentMethod;
+
+    @Column(name = "transaction_id", length = 100)
+    private String transactionId;
+
+    @Column(name = "issue_date")
+    private LocalDate issueDate;
+
+    @Column(name = "due_date")
     private LocalDate dueDate;
 
     @Column(name = "paid_date")
     private LocalDate paidDate;
 
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        if (status == null) {
-            status = InvoiceStatus.PENDING;
-        }
-        if (paidAmount == null) {
-            paidAmount = BigDecimal.ZERO;
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

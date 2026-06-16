@@ -1,55 +1,57 @@
 package com.intellops.order.controller;
 
-import com.intellops.order.dto.ApiResponse;
-import com.intellops.order.dto.OrderDto;
+import com.intellops.order.dto.*;
 import com.intellops.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
+@Slf4j
+@CrossOrigin
 public class OrderController {
 
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderDto.Response>> createOrder(
-            @Valid @RequestBody OrderDto.CreateRequest request) {
-        OrderDto.Response response = orderService.createOrder(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response, "Order created successfully"));
+    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request) {
+        log.info("Creating order for customer: {}", request.getCustomerId());
+        OrderResponse response = orderService.createOrder(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{orderNumber}")
-    public ResponseEntity<ApiResponse<OrderDto.Response>> getOrder(@PathVariable String orderNumber) {
-        OrderDto.Response response = orderService.getOrderByNumber(orderNumber);
-        return ResponseEntity.ok(ApiResponse.success(response));
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable String orderNumber) {
+        OrderResponse response = orderService.getOrder(orderNumber);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<OrderDto.Response>>> getAllOrders() {
-        List<OrderDto.Response> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(ApiResponse.success(orders));
-    }
-
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<ApiResponse<List<OrderDto.Response>>> getOrdersByCustomer(
-            @PathVariable Long customerId) {
-        List<OrderDto.Response> orders = orderService.getOrdersByCustomer(customerId);
-        return ResponseEntity.ok(ApiResponse.success(orders));
+    public ResponseEntity<Page<OrderResponse>> listOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search) {
+        Page<OrderResponse> orders = orderService.listOrders(page, size, search);
+        return ResponseEntity.ok(orders);
     }
 
     @PatchMapping("/{orderNumber}/status")
-    public ResponseEntity<ApiResponse<OrderDto.Response>> updateOrderStatus(
+    public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable String orderNumber,
-            @Valid @RequestBody OrderDto.StatusUpdateRequest request) {
-        OrderDto.Response response = orderService.updateOrderStatus(orderNumber, request);
-        return ResponseEntity.ok(ApiResponse.success(response, "Order status updated"));
+            @Valid @RequestBody UpdateOrderStatusRequest request) {
+        log.info("Updating order {} status to {}", orderNumber, request.getStatus());
+        OrderResponse response = orderService.updateOrderStatus(orderNumber, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<java.util.Map<String, Object>> getOrderStats() {
+        return ResponseEntity.ok(orderService.getOrderStats());
     }
 }

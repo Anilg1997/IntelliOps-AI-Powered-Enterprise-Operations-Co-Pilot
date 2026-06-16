@@ -1,97 +1,58 @@
 server:
   port: 8084
-  servlet:
-    context-path: /api
 
 spring:
   application:
     name: billing-service
 
+  profiles:
+    active: default
+
   datasource:
-    url: jdbc:h2:file:./data/billing_db;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+    username: INTELLOPS_BILLING
+    password: Billing@2024
+    driver-class-name: oracle.jdbc.OracleDriver
     hikari:
       maximum-pool-size: 10
-      minimum-idle: 2
+      minimum-idle: 3
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: false
     properties:
       hibernate:
-        format_sql: true
-    open-in-view: false
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-  flyway:
-    enabled: false
+        dialect: org.hibernate.dialect.OracleDialect
 
   kafka:
     bootstrap-servers: localhost:9092
+    consumer:
+      group-id: billing-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: com.intellops.order.events
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.type.mapping: "event:java.util.Map"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
 
 logging:
   level:
     com.intellops: DEBUG
-
----
-spring:
-  config:
-    activate:
-      on-profile: oracle
-
-  datasource:
-    url: jdbc:oracle:thin:@localhost:1521:XE
-    username: INTELLOPS_BILLING
-    password: Billing@2024
-    driver-class-name: oracle.jdbc.OracleDriver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
-
-  jpa:
-    database-platform: org.hibernate.dialect.OracleDialect
-    hibernate:
-      ddl-auto: validate
-
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: true
-    schemas: INTELLOPS_BILLING
-
-  h2:
-    console:
-      enabled: false
-
 ---
 spring:
   config:
     activate:
       on-profile: docker
-
   datasource:
-    url: jdbc:oracle:thin://oracle-xe:1521/XEPDB1
-    username: INTELLOPS_BILLING
-    password: Billing@2024
-    driver-class-name: oracle.jdbc.OracleDriver
-
-  jpa:
-    database-platform: org.hibernate.dialect.OracleDialect
-    hibernate:
-      ddl-auto: update
-
+    url: jdbc:oracle:thin:@oracle-xe:1521/XEPDB1
   kafka:
     bootstrap-servers: kafka:9092

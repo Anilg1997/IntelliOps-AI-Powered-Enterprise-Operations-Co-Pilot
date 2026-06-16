@@ -1,255 +1,192 @@
-// IntelliOps - MongoDB Initialization Script
-// Creates the inventory database with seed data for development/testing
+// IntelliOps Platform - MongoDB Initialization
+// Creates collections for Inventory Service and AI Co-Pilot Service
 
 db = db.getSiblingDB('intellops_inventory');
 
-// ─── Categories ────────────────────────────────────────────────────────────
-
-db.categories.insertMany([
-    {
-        name: 'Hardware',
-        description: 'Physical IT equipment and accessories',
-        parentCategory: null,
-        active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        name: 'Software',
-        description: 'Software licenses and subscriptions',
-        parentCategory: null,
-        active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        name: 'Security',
-        description: 'Security appliances, certificates, and tools',
-        parentCategory: 'Hardware',
-        active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        name: 'Services',
-        description: 'Consulting and professional services',
-        parentCategory: null,
-        active: true,
-        created_at: new Date(),
-        updated_at: new Date()
+// Product Catalog Collection
+db.createCollection('products', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['sku', 'name', 'price', 'category'],
+      properties: {
+        sku: { bsonType: 'string', description: 'Stock Keeping Unit' },
+        name: { bsonType: 'string' },
+        description: { bsonType: 'string' },
+        price: { bsonType: 'double' },
+        category: { bsonType: 'string' },
+        attributes: { bsonType: 'object' },
+        stockQuantity: { bsonType: 'int' },
+        reorderThreshold: { bsonType: 'int' },
+        active: { bsonType: 'bool' }
+      }
     }
-]);
-
-// ─── Products ──────────────────────────────────────────────────────────────
+  }
+});
 
 db.products.createIndex({ sku: 1 }, { unique: true });
+db.products.createIndex({ category: 1 });
+db.products.createIndex({ name: 'text', description: 'text' });
 
+// Stock Reservations Collection
+db.createCollection('stock_reservations', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['orderId', 'productId', 'quantity', 'status'],
+      properties: {
+        orderId: { bsonType: 'string' },
+        productId: { bsonType: 'string' },
+        quantity: { bsonType: 'int' },
+        status: { bsonType: 'string', enum: ['RESERVED', 'RELEASED', 'FULFILLED'] },
+        reservedAt: { bsonType: 'date' },
+        expiresAt: { bsonType: 'date' }
+      }
+    }
+  }
+});
+
+db.stock_reservations.createIndex({ orderId: 1 });
+db.stock_reservations.createIndex({ productId: 1 });
+db.stock_reservations.createIndex({ status: 1 });
+
+// Seed some sample products
 db.products.insertMany([
-    {
-        sku: 'SRV-RACK-42U',
-        name: 'Enterprise Server Rack',
-        description: '42U standard server rack with cooling system, cable management, and lockable doors',
-        category: 'Hardware',
-        price: 2499.99,
-        specs: { form_factor: '42U', cooling: 'Dual Fan', material: 'Steel', weight: '85 kg' },
-        tags: ['rack', 'server', 'infrastructure', 'datacenter'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'CLD-STO-1TB',
-        name: 'Cloud Storage License (1TB)',
-        description: 'Annual subscription for 1TB cloud storage with redundancy and backup',
-        category: 'Software',
-        price: 599.99,
-        specs: { capacity: '1TB', duration: 'Annual', redundancy: 'Geo-redundant' },
-        tags: ['cloud', 'storage', 'subscription', 'backup'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'NET-SW-48G',
-        name: 'Network Switch 48-Port',
-        description: 'Gigabit managed network switch, 48 ports, PoE+ support, VLAN capability',
-        category: 'Hardware',
-        price: 1299.99,
-        specs: { ports: '48', speed: '1Gbps', poe: 'PoE+', managed: 'Yes' },
-        tags: ['network', 'switch', 'gigabit', 'infrastructure'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'SSL-WILD-1Y',
-        name: 'SSL Certificate - Wildcard',
-        description: '1-year wildcard SSL certificate for unlimited subdomains',
-        category: 'Security',
-        price: 349.99,
-        specs: { type: 'Wildcard', duration: '1 Year', validation: 'Domain Validation', subdomains: 'Unlimited' },
-        tags: ['ssl', 'security', 'certificate', 'wildcard'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'DB-LIC-STD',
-        name: 'Database License - Standard',
-        description: 'Perpetual database license, standard edition, includes 5 user CALs',
-        category: 'Software',
-        price: 4999.99,
-        specs: { edition: 'Standard', type: 'Perpetual', users: '5', support: '1 Year Included' },
-        tags: ['database', 'license', 'software', 'enterprise'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'FIB-LC10',
-        name: 'Fiber Optic Cable (10m)',
-        description: 'LC-LC duplex fiber optic patch cable, 10 meters, OS2 single-mode',
-        category: 'Hardware',
-        price: 29.99,
-        specs: { length: '10m', connector: 'LC-LC', mode: 'Single-mode OS2', type: 'Duplex' },
-        tags: ['fiber', 'cable', 'networking', 'patch'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'FW-APPL-1U',
-        name: 'Firewall Appliance',
-        description: 'Next-generation firewall, 1U form factor, 1Gbps throughput, IPS/IDS',
-        category: 'Security',
-        price: 3899.99,
-        specs: { form_factor: '1U', throughput: '1Gbps', features: 'IPS/IDS, VPN, DPI', users: '500' },
-        tags: ['firewall', 'security', 'appliance', 'network'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'CONS-10HR',
-        name: 'Consulting Hours (10-pack)',
-        description: 'Block of 10 hours enterprise architecture consulting with senior architect',
-        category: 'Services',
-        price: 4500.00,
-        specs: { hours: '10', type: 'Enterprise Architecture', delivery: 'Remote or On-site' },
-        tags: ['consulting', 'services', 'architecture', 'enterprise'],
-        active: true,
-        image_url: null,
-        created_at: new Date(),
-        updated_at: new Date()
-    }
+  {
+    sku: 'ELEC-LAPTOP-001',
+    name: 'Enterprise Laptop Pro 15',
+    description: 'High-performance business laptop with 16GB RAM and 512GB SSD',
+    price: 1299.99,
+    category: 'electronics',
+    attributes: { ram: '16GB', storage: '512GB SSD', processor: 'Intel i7-13700H', display: '15.6" FHD' },
+    stockQuantity: 150,
+    reorderThreshold: 30,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    sku: 'ELEC-MONITOR-002',
+    name: 'UltraSharp 27" 4K Monitor',
+    description: 'Professional 4K UHD monitor with USB-C connectivity',
+    price: 549.99,
+    category: 'electronics',
+    attributes: { resolution: '3840x2160', size: '27 inch', panel: 'IPS', connectivity: 'USB-C, HDMI, DisplayPort' },
+    stockQuantity: 85,
+    reorderThreshold: 20,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    sku: 'ELEC-KEYBOARD-003',
+    name: 'Mechanical Keyboard RGB',
+    description: 'Full-size mechanical keyboard with Cherry MX switches',
+    price: 149.99,
+    category: 'electronics',
+    attributes: { switches: 'Cherry MX Brown', layout: 'Full-size', backlight: 'RGB', connectivity: 'USB-C, Wireless' },
+    stockQuantity: 200,
+    reorderThreshold: 50,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    sku: 'OFFICE-DESK-001',
+    name: 'Standing Desk Electric',
+    description: 'Height-adjustable electric standing desk with memory presets',
+    price: 699.99,
+    category: 'furniture',
+    attributes: { height: '27.5" to 47"', surface: '60x30 inches', material: 'Bamboo', motor: 'Dual Motor' },
+    stockQuantity: 40,
+    reorderThreshold: 10,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    sku: 'OFFICE-CHAIR-002',
+    name: 'Ergonomic Executive Chair',
+    description: 'Premium ergonomic office chair with lumbar support',
+    price: 449.99,
+    category: 'furniture',
+    attributes: { material: 'Mesh', adjustments: '8-way', armrests: '4D', weight_capacity: '300 lbs' },
+    stockQuantity: 60,
+    reorderThreshold: 15,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    sku: 'CABLE-HDMI-001',
+    name: 'HDMI 2.1 Cable 6ft',
+    description: 'Ultra high-speed HDMI 2.1 certified cable',
+    price: 19.99,
+    category: 'accessories',
+    attributes: { version: 'HDMI 2.1', length: '6ft', bandwidth: '48Gbps', certification: 'Ultra High Speed' },
+    stockQuantity: 500,
+    reorderThreshold: 100,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
 ]);
 
-// ─── Stock ──────────────────────────────────────────────────────────────────
+// AI Co-Pilot Conversation Memory
+db = db.getSiblingDB('intellops_copilot');
 
-db.stock.createIndex({ sku: 1 }, { unique: true });
-
-db.stock.insertMany([
-    {
-        sku: 'SRV-RACK-42U',
-        product_name: 'Enterprise Server Rack',
-        total_quantity: 25,
-        reserved_quantity: 3,
-        warehouse_location: 'WH-NORTH-A12',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 5,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'CLD-STO-1TB',
-        product_name: 'Cloud Storage License (1TB)',
-        total_quantity: 100,
-        reserved_quantity: 10,
-        warehouse_location: 'WH-DIGITAL',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 20,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'NET-SW-48G',
-        product_name: 'Network Switch 48-Port',
-        total_quantity: 50,
-        reserved_quantity: 5,
-        warehouse_location: 'WH-NORTH-B07',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 10,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'SSL-WILD-1Y',
-        product_name: 'SSL Certificate - Wildcard',
-        total_quantity: 200,
-        reserved_quantity: 15,
-        warehouse_location: 'WH-DIGITAL',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 30,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'DB-LIC-STD',
-        product_name: 'Database License - Standard',
-        total_quantity: 30,
-        reserved_quantity: 2,
-        warehouse_location: 'WH-DIGITAL',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 5,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'FIB-LC10',
-        product_name: 'Fiber Optic Cable (10m)',
-        total_quantity: 500,
-        reserved_quantity: 20,
-        warehouse_location: 'WH-SOUTH-C03',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 100,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'FW-APPL-1U',
-        product_name: 'Firewall Appliance',
-        total_quantity: 15,
-        reserved_quantity: 1,
-        warehouse_location: 'WH-NORTH-A12',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 3,
-        created_at: new Date(),
-        updated_at: new Date()
-    },
-    {
-        sku: 'CONS-10HR',
-        product_name: 'Consulting Hours (10-pack)',
-        total_quantity: 999,
-        reserved_quantity: 10,
-        warehouse_location: 'WH-DIGITAL',
-        restock_date: null,
-        status: 'IN_STOCK',
-        reorder_threshold: 50,
-        created_at: new Date(),
-        updated_at: new Date()
+db.createCollection('conversations', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['userId', 'messages'],
+      properties: {
+        userId: { bsonType: 'string' },
+        title: { bsonType: 'string' },
+        messages: {
+          bsonType: 'array',
+          items: {
+            bsonType: 'object',
+            required: ['role', 'content'],
+            properties: {
+              role: { bsonType: 'string', enum: ['user', 'assistant', 'system', 'tool'] },
+              content: { bsonType: 'string' },
+              toolCalls: { bsonType: 'array' },
+              toolResult: { bsonType: 'string' },
+              timestamp: { bsonType: 'date' }
+            }
+          }
+        },
+        createdAt: { bsonType: 'date' },
+        updatedAt: { bsonType: 'date' }
+      }
     }
-]);
+  }
+});
+
+db.conversations.createIndex({ userId: 1 });
+db.conversations.createIndex({ updatedAt: -1 });
+
+// Activity / Audit Log
+db.createCollection('activity_log', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['eventType', 'timestamp'],
+      properties: {
+        eventType: { bsonType: 'string' },
+        source: { bsonType: 'string' },
+        entityId: { bsonType: 'string' },
+        entityType: { bsonType: 'string' },
+        details: { bsonType: 'object' },
+        timestamp: { bsonType: 'date' }
+      }
+    }
+  }
+});
+
+db.activity_log.createIndex({ entityId: 1 });
+db.activity_log.createIndex({ eventType: 1 });
+db.activity_log.createIndex({ timestamp: -1 });
+
+print('MongoDB initialization complete.');

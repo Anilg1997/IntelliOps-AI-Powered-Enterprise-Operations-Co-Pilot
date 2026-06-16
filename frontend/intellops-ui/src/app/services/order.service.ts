@@ -1,90 +1,78 @@
-import { Injectable, inject } from '@angular/core';
-import { Apollo } from 'apollo-angular';
-import { map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import gql from 'graphql-tag';
 
-export interface Customer {
-  id: string;
+export interface Order {
+  id: number;
+  orderNumber: string;
+  customer: CustomerDto;
+  status: string;
+  totalAmount: number;
+  taxAmount: number;
+  notes: string;
+  lineItems: LineItemDto[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomerDto {
+  id: number;
+  customerNumber: string;
   name: string;
   email: string;
-  phoneNumber?: string;
-  address?: string;
+  phone: string;
 }
 
-export interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  price: number;
-  category?: string;
-}
-
-export interface OrderLineItem {
-  id: string;
+export interface LineItemDto {
+  id: number;
+  product: ProductDto;
   quantity: number;
   unitPrice: number;
   subtotal: number;
-  product: Product;
 }
 
-export interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  statusReason?: string;
-  totalAmount: number;
-  createdAt: string;
-  updatedAt?: string;
-  customer: Customer;
-  lineItems?: OrderLineItem[];
+export interface ProductDto {
+  id: number;
+  sku: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
 }
 
-const GET_ORDER = gql`
-  query GetOrder($orderNumber: String!) {
-    order(orderNumber: $orderNumber) {
-      id
-      orderNumber
-      status
-      statusReason
-      totalAmount
-      createdAt
-      updatedAt
-      customer { id name email phoneNumber address }
-      lineItems {
-        id quantity unitPrice subtotal
-        product { id name sku price category }
-      }
-    }
-  }
-`;
-
-const GET_ALL_ORDERS = gql`
-  query GetAllOrders {
-    allOrders {
-      id
-      orderNumber
-      status
-      totalAmount
-      createdAt
-      customer { id name email }
-    }
-  }
-`;
+export interface OrderPage {
+  content: Order[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private apollo = inject(Apollo);
+  private readonly API_URL = '/api/v1/orders';
 
-  getOrder(orderNumber: string): Observable<Order> {
-    return this.apollo
-      .watchQuery<{ order: Order }>({ query: GET_ORDER, variables: { orderNumber } })
-      .valueChanges.pipe(map(result => result.data.order));
+  constructor(private http: HttpClient) {}
+
+  getOrders(page = 0, size = 20, search = ''): Observable<OrderPage> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (search) params = params.set('search', search);
+    return this.http.get<OrderPage>(this.API_URL, { params });
   }
 
-  getAllOrders(): Observable<Order[]> {
-    return this.apollo
-      .watchQuery<{ allOrders: Order[] }>({ query: GET_ALL_ORDERS })
-      .valueChanges.pipe(map(result => result.data.allOrders));
+  getOrder(orderNumber: string): Observable<Order> {
+    return this.http.get<Order>(`${this.API_URL}/${orderNumber}`);
+  }
+
+  createOrder(data: any): Observable<Order> {
+    return this.http.post<Order>(this.API_URL, data);
+  }
+
+  updateStatus(orderNumber: string, status: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.API_URL}/${orderNumber}/status`, { status });
+  }
+
+  getStats(): Observable<any> {
+    return this.http.get(`${this.API_URL}/stats`);
   }
 }

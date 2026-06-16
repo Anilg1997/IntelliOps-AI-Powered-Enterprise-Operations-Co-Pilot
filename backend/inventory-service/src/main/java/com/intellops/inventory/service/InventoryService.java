@@ -1,205 +1,158 @@
 package com.intellops.inventory.service;
 
-import com.intellops.inventory.document.StockItem;
-import com.intellops.inventory.exception.InsufficientStockException;
-import com.intellops.inventory.exception.ResourceNotFoundException;
-import com.intellops.inventory.repository.StockRepository;
+import com.intellops.inventory.model.Product;
+import com.intellops.inventory.model.StockReservation;
+import com.intellops.inventory.repository.ProductRepository;
+import com.intellops.inventory.repository.StockReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class InventoryService {
 
-    private final StockRepository stockRepository;
+    private final ProductRepository productRepository;
+    private final StockReservationRepository reservationRepository;
 
-    /**
-     * Check if sufficient stock is available for the given SKU and quantity.
-     */
-    public StockCheckResult checkStock(String sku, int quantity) {
-        Optional<StockItem> stockOpt = stockRepository.findBySku(sku);
+    public Map<String, Object> checkStock(String productId, int requestedQuantity) {
+        Product product = productRepository.findBySku(productId)
+                .or(() -> productRepository.findById(productId))
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
 
-        if (stockOpt.isEmpty()) {
-            return StockCheckResult.unavailable(0, null, null);
+        int reservedQuantity = getReservedQuantity(productId);
+        int availableQuantity = product.getStockQuantity() - reservedQuantity;
+        boolean inStock = availableQuantity >= requestedQuantity;
+
+        String reorderStatus = product.needsReorder() ? "REORDER_NEEDED" : "OK";
+        String estimatedRestockDate = product.needsReorder()
+                ? LocalDateTime.now().plusDays(5).toLocalDate().toString()
+                : null;
+
+        return Map.of(
+                "inStock", inStock,
+                "availableQuantity", availableQuantity,
+                "reservedQuantity", reservedQuantity,
+                "reorderStatus", reorderStatus,
+                "estimatedRestockDate", estimatedRestockDate != null ? estimatedRestockDate : ""
+        );
+    }
+
+    public Map<String, Object> reserveStock(String orderId, String productId, int quantity, int ttlMinutes) {
+        Product product = productRepository.findBySku(productId)
+                .or(() -> productRepository.findById(productId))
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+
+        int reservedQuantity = getReservedQuantity(productId);
+        int availableQuantity = product.getStockQuantity() - reservedQuantity;
+
+        if (availableQuantity < quantity) {
+            return Map.of(
+                    "success", false,
+                    "reservationId", "",
+                    "message", "Insufficient stock. Available: " + availableQuantity + ", Requested: " + quantity
+            );
         }
 
-        StockItem stock = stockOpt.get();
-        int available = stock.getAvailableQuantity();
-        boolean availableFlag = available >= quantity;
-
-        return StockCheckResult.builder()
-                .available(availableFlag)
-                .availableQuantity(available)
-                .warehouseLocation(stock.getWarehouseLocation())
-                .estimatedRestockDate(stock.getRestockDate() != null ? stock.getRestockDate().toString() : null)
-                .status(stock.getStatus())
+        StockReservation reservation = StockReservation.builder()
+                .orderId(orderId)
+                .productId(productId)
+                .quantity(quantity)
+                .status("RESERVED")
+                .reservedAt(LocalDateTime.now())
+                .expiresAt(LocalDateTime.now().plusMinutes(ttlMinutes))
                 .build();
+
+        reservation = reservationRepository.save(reservation);
+        log.info("Stock reserved: {} units of {} for order {}", quantity, productId, orderId);
+
+        return Map.of(
+                "success", true,
+                "reservationId", reservation.getId(),
+                "message", "Stock reserved successfully"
+        );
     }
 
-    /**
-     * Reserve stock for an order. Throws InsufficientStockException if not enough available.
-     */
-    public StockReserveResult reserveStock(String sku, int quantity, String orderNumber) {
-        StockItem stock = stockRepository.findBySku(sku)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock", "sku", sku));
-
-        int available = stock.getAvailableQuantity();
-        if (available < quantity) {
-            log.warn("Stock reservation failed for SKU '{}': requested {}, available {} (order: {})",
-                    sku, quantity, available, orderNumber);
-            throw new InsufficientStockException(sku, quantity, available);
+    public Map<String, Object> releaseStock(String reservationId, String orderId) {
+        Optional<StockReservation> reservationOpt = reservationRepository.findByOrderIdAndProductId(orderId, reservationId);
+        if (reservationOpt.isEmpty()) {
+            return Map.of("success", false, "message", "Reservation not found");
         }
 
-        stock.setReservedQuantity(stock.getReservedQuantity() + quantity);
-        updateStockStatus(stock);
-        stock.setUpdatedAt(LocalDateTime.now());
-        stock = stockRepository.save(stock);
+        StockReservation reservation = reservationOpt.get();
+        reservation.setStatus("RELEASED");
+        reservationRepository.save(reservation);
 
-        log.info("Reserved {} units of SKU '{}' for order {} (remaining available: {})",
-                quantity, sku, orderNumber, stock.getAvailableQuantity());
-
-        return StockReserveResult.builder()
-                .success(true)
-                .message(String.format("Reserved %d units of SKU '%s'", quantity, sku))
-                .remainingQuantity(stock.getAvailableQuantity())
-                .build();
+        log.info("Stock released for reservation: {} order: {}", reservationId, orderId);
+        return Map.of("success", true, "message", "Stock released successfully");
     }
 
-    /**
-     * Release reserved stock (when order is cancelled, payment fails, etc.).
-     */
-    public StockReleaseResult releaseStock(String sku, int quantity, String orderNumber, String reason) {
-        StockItem stock = stockRepository.findBySku(sku)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock", "sku", sku));
+    public Map<String, Object> getProduct(String productId) {
+        Product product = productRepository.findBySku(productId)
+                .or(() -> productRepository.findById(productId))
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
 
-        int newReserved = Math.max(0, stock.getReservedQuantity() - quantity);
-        stock.setReservedQuantity(newReserved);
-        updateStockStatus(stock);
-        stock.setUpdatedAt(LocalDateTime.now());
-        stock = stockRepository.save(stock);
-
-        log.info("Released {} units of SKU '{}' from order {} (reason: {}, available: {})",
-                quantity, sku, orderNumber, reason, stock.getAvailableQuantity());
-
-        return StockReleaseResult.builder()
-                .success(true)
-                .message(String.format("Released %d units of SKU '%s'", quantity, sku))
-                .availableQuantity(stock.getAvailableQuantity())
-                .build();
+        return Map.of(
+                "id", product.getId(),
+                "sku", product.getSku(),
+                "name", product.getName(),
+                "description", product.getDescription() != null ? product.getDescription() : "",
+                "price", product.getPrice(),
+                "category", product.getCategory() != null ? product.getCategory() : "",
+                "stockQuantity", product.getStockQuantity(),
+                "reorderThreshold", product.getReorderThreshold(),
+                "active", product.getActive()
+        );
     }
 
-    /**
-     * Get full stock details for a product.
-     */
-    public StockDetailsResult getStockDetails(String sku) {
-        StockItem stock = stockRepository.findBySku(sku)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock", "sku", sku));
-
-        return StockDetailsResult.builder()
-                .sku(stock.getSku())
-                .productName(stock.getProductName())
-                .totalQuantity(stock.getTotalQuantity())
-                .reservedQuantity(stock.getReservedQuantity())
-                .availableQuantity(stock.getAvailableQuantity())
-                .warehouseLocation(stock.getWarehouseLocation())
-                .restockDate(stock.getRestockDate() != null ? stock.getRestockDate().toString() : null)
-                .status(stock.getStatus().name())
-                .build();
-    }
-
-    public List<StockItem> getAllStock() {
-        return stockRepository.findAll();
-    }
-
-    public StockItem getStockEntityBySku(String sku) {
-        return stockRepository.findBySku(sku)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock", "sku", sku));
-    }
-
-    public StockItem saveStock(StockItem stock) {
-        updateStockStatus(stock);
-        if (stock.getCreatedAt() == null) {
-            stock.setCreatedAt(LocalDateTime.now());
-        }
-        stock.setUpdatedAt(LocalDateTime.now());
-        return stockRepository.save(stock);
-    }
-
-    private void updateStockStatus(StockItem stock) {
-        int available = stock.getAvailableQuantity();
-        if (available <= 0) {
-            stock.setStatus(StockItem.StockStatus.OUT_OF_STOCK);
-        } else if (available <= stock.getReorderThreshold()) {
-            stock.setStatus(StockItem.StockStatus.LOW_STOCK);
+    public Map<String, Object> listProducts(String category, boolean activeOnly, int page, int pageSize) {
+        List<Product> products;
+        if (category != null && !category.isEmpty()) {
+            products = productRepository.findByCategoryAndActiveTrue(category);
+        } else if (activeOnly) {
+            products = productRepository.findByActiveTrue();
         } else {
-            stock.setStatus(StockItem.StockStatus.IN_STOCK);
+            products = productRepository.findAll();
         }
+
+        int start = page * pageSize;
+        int end = Math.min(start + pageSize, products.size());
+        List<Product> paged = start < products.size() ? products.subList(start, end) : List.of();
+
+        List<Map<String, Object>> productMaps = paged.stream().map(p -> Map.of(
+                "id", p.getId(),
+                "sku", p.getSku(),
+                "name", p.getName(),
+                "description", p.getDescription() != null ? p.getDescription() : "",
+                "price", p.getPrice(),
+                "category", p.getCategory() != null ? p.getCategory() : "",
+                "stockQuantity", p.getStockQuantity(),
+                "reorderThreshold", p.getReorderThreshold() != null ? p.getReorderThreshold() : 0,
+                "active", p.getActive()
+        )).collect(Collectors.toList());
+
+        return Map.of(
+                "products", productMaps,
+                "totalCount", products.size(),
+                "page", page,
+                "pageSize", pageSize
+        );
     }
 
-    // ─── Result classes ─────────────────────────────────────────────────────
-
-    @lombok.Data
-    @lombok.Builder
-    @lombok.NoArgsConstructor
-    @lombok.AllArgsConstructor
-    public static class StockCheckResult {
-        private boolean available;
-        private int availableQuantity;
-        private String warehouseLocation;
-        private String estimatedRestockDate;
-        private StockItem.StockStatus status;
-
-        public static StockCheckResult unavailable(int availableQty, String warehouse, String restockDate) {
-            return StockCheckResult.builder()
-                    .available(false)
-                    .availableQuantity(availableQty)
-                    .warehouseLocation(warehouse)
-                    .estimatedRestockDate(restockDate)
-                    .status(StockItem.StockStatus.OUT_OF_STOCK)
-                    .build();
-        }
-    }
-
-    @lombok.Data
-    @lombok.Builder
-    @lombok.NoArgsConstructor
-    @lombok.AllArgsConstructor
-    public static class StockReserveResult {
-        private boolean success;
-        private String message;
-        private int remainingQuantity;
-    }
-
-    @lombok.Data
-    @lombok.Builder
-    @lombok.NoArgsConstructor
-    @lombok.AllArgsConstructor
-    public static class StockReleaseResult {
-        private boolean success;
-        private String message;
-        private int availableQuantity;
-    }
-
-    @lombok.Data
-    @lombok.Builder
-    @lombok.NoArgsConstructor
-    @lombok.AllArgsConstructor
-    public static class StockDetailsResult {
-        private String sku;
-        private String productName;
-        private int totalQuantity;
-        private int reservedQuantity;
-        private int availableQuantity;
-        private String warehouseLocation;
-        private String restockDate;
-        private String status;
+    private int getReservedQuantity(String productId) {
+        List<StockReservation> activeReservations =
+                reservationRepository.findByProductIdAndStatus(productId, "RESERVED");
+        return activeReservations.stream()
+                .filter(r -> !r.isExpired())
+                .mapToInt(StockReservation::getQuantity)
+                .sum();
     }
 }

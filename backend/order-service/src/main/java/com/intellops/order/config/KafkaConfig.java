@@ -7,22 +7,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KafkaConfig {
 
-    public static final String ORDER_CREATED_TOPIC = "order.created";
-    public static final String ORDER_STATUS_CHANGED_TOPIC = "order.status.changed";
-    public static final String PAYMENT_FAILED_TOPIC = "payment.failed";
+    public static final String ORDER_EVENTS_TOPIC = "order-events";
+    public static final String ACTIVITY_LOG_TOPIC = "activity-log";
 
     @Bean
-    public NewTopic orderCreatedTopic() {
-        return new NewTopic(ORDER_CREATED_TOPIC, 3, (short) 1);
+    public NewTopic orderEventsTopic() {
+        return new NewTopic(ORDER_EVENTS_TOPIC, 3, (short) 1);
     }
 
     @Bean
-    public NewTopic orderStatusChangedTopic() {
-        return new NewTopic(ORDER_STATUS_CHANGED_TOPIC, 3, (short) 1);
-    }
-
-    @Bean
-    public NewTopic paymentFailedTopic() {
-        return new NewTopic(PAYMENT_FAILED_TOPIC, 3, (short) 1);
+    public NewTopic activityLogTopic() {
+        return new NewTopic(ACTIVITY_LOG_TOPIC, 3, (short) 1);
     }
 }

@@ -1,62 +1,54 @@
-"IntelliOps - Order & Customer GraphQL Schema (BFF layer)"
-"Enables the frontend to fetch an order with customer and line items in a single query."
-
-scalar DateTime
-scalar BigDecimal
-
-type Customer {
-    id: ID!
-    name: String!
-    email: String!
-    phoneNumber: String
-    address: String
-    createdAt: DateTime
-    updatedAt: DateTime
-}
-
-type Product {
-    id: ID!
-    name: String!
-    description: String
-    sku: String!
-    price: BigDecimal!
-    category: String
-    createdAt: DateTime
-}
-
-type OrderLineItem {
-    id: ID!
-    product: Product!
-    quantity: Int!
-    unitPrice: BigDecimal!
-    subtotal: BigDecimal!
+type Query {
+    order(orderNumber: String!): Order
+    orders(page: Int = 0, size: Int = 20): [Order!]!
+    orderStats: OrderStats
 }
 
 type Order {
     id: ID!
     orderNumber: String!
+    customer: Customer
     status: String!
-    statusReason: String
-    totalAmount: BigDecimal!
-    customer: Customer!
-    lineItems: [OrderLineItem!]!
-    createdAt: DateTime
-    updatedAt: DateTime
+    totalAmount: Float!
+    taxAmount: Float!
+    notes: String
+    lineItems: [LineItem!]!
+    createdAt: String
+    updatedAt: String
 }
 
-type Query {
-    "Fetch a single order with full details (customer + line items + product info)"
-    order(orderNumber: String!): Order
+type Customer {
+    id: ID!
+    customerNumber: String!
+    name: String!
+    email: String!
+    phone: String
+}
 
-    "Fetch orders, optionally filtered by customer ID"
-    orders(customerId: Long): [Order!]!
+type LineItem {
+    id: ID!
+    product: Product!
+    quantity: Int!
+    unitPrice: Float!
+    subtotal: Float!
+}
 
-    "Fetch all orders across all customers"
-    allOrders: [Order!]!
+type Product {
+    id: ID!
+    sku: String!
+    name: String!
+    description: String
+    price: Float!
+    category: String
+}
 
-    "Fetch a single customer by ID"
-    customer(id: Long!): Customer
-
-    "Fetch all customers"
-    allCustomers: [Customer!]!
+type OrderStats {
+    totalOrders: Long!
+    pendingOrders: Long!
+    confirmedOrders: Long!
+    processingOrders: Long!
+    shippedOrders: Long!
+    deliveredOrders: Long!
+    totalAmount: Float!
+    deliveredAmount: Float!
 }

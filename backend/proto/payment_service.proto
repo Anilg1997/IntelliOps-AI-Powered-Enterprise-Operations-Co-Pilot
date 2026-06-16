@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package intellops.billing;
+
+option java_package = "com.intellops.proto.billing";
+option java_multiple_files = true;
+
+service BillingGrpcService {
+  rpc GetInvoice (GetInvoiceRequest) returns (GetInvoiceResponse);
+  rpc ListInvoices (ListInvoicesRequest) returns (ListInvoicesResponse);
+  rpc GetPaymentStatus (PaymentStatusRequest) returns (PaymentStatusResponse);
+}
+
+message GetInvoiceRequest {
+  string invoice_id = 1;
+}
+
+message GetInvoiceResponse {
+  string id = 1;
+  string invoice_number = 2;
+  string order_number = 3;
+  string customer_name = 4;
+  double total_amount = 5;
+  double tax_amount = 6;
+  string status = 7;
+  string issue_date = 8;
+  string due_date = 9;
+}
+
+message ListInvoicesRequest {
+  string status = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListInvoicesResponse {
+  repeated GetInvoiceResponse invoices = 1;
+  int32 total_count = 2;
+}
+
+message PaymentStatusRequest {
+  string invoice_id = 1;
+}
+
+message PaymentStatusResponse {
+  string invoice_id = 1;
+  string payment_status = 2;
+  string payment_method = 3;
+  string transaction_id = 4;
+  string payment_date = 5;
+}
