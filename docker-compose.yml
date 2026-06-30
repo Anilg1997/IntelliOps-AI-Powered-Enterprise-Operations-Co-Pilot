@@ -155,7 +155,21 @@ services:
     ports:
       - "8084:8084"
 
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: atlasops-chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: "/chroma/chroma"
+      ANONYMIZED_TELEMETRY: "FALSE"
+      CHROMA_SERVER_CORS_ALLOW_ORIGINS: '["*"]'
+
 volumes:
   postgres-data:
   mongo-data:
   oracle-data:
+  chroma-data:

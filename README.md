@@ -1,434 +1,327 @@
 <div align="center">
+  <img src="https://img.shields.io/badge/AtlasOps-AI%20Enterprise%20Co--Pilot-6C5CE7?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjYiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIyIi8+PC9zdmc+" alt="AtlasOps"/>
 
-# ⚡ IntelliOps — AI-Powered Enterprise Operations Co-Pilot
+  # AtlasOps — AI-Powered Enterprise Operations Platform
 
-**An AI co-pilot that sits on top of enterprise order management, inventory, billing, and legacy systems — answering support questions in plain English using RAG, tool-calling agents, and a locally-hosted LLM.**
+  **An intelligent co-pilot that unifies order management, inventory, billing, and legacy systems — answering support questions in plain English using RAG, tool-calling agents, a locally-hosted LLM, and a free vector database.**
 
-[![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk)](https://adoptium.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-brightgreen?style=flat-square&logo=spring)](https://spring.io/projects/spring-boot)
-[![Angular](https://img.shields.io/badge/Angular-17-red?style=flat-square&logo=angular)](https://angular.dev/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
-[![GraphQL](https://img.shields.io/badge/GraphQL-BFF-E10098?style=flat-square&logo=graphql)](https://graphql.org/)
-[![gRPC](https://img.shields.io/badge/gRPC-internal-4285F4?style=flat-square)](https://grpc.io/)
-[![Kafka](https://img.shields.io/badge/Kafka-events-231F20?style=flat-square&logo=apachekafka)](https://kafka.apache.org/)
-[![Ollama](https://img.shields.io/badge/AI-Ollama_(local_LLM)-000?style=flat-square&logo=ollama)](https://ollama.ai/)
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker)](https://docker.com/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+  <br>
+
+  [![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk)](https://adoptium.net/)
+  [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-brightgreen?style=flat-square&logo=spring)](https://spring.io/projects/spring-boot)
+  [![Angular](https://img.shields.io/badge/Angular-17-red?style=flat-square&logo=angular)](https://angular.dev/)
+  [![LangChain4j](https://img.shields.io/badge/LangChain4j-1.17-6C5CE7?style=flat-square)](https://github.com/langchain4j/langchain4j)
+  [![Ollama](https://img.shields.io/badge/Ollama-local%20LLM-000?style=flat-square&logo=ollama)](https://ollama.ai/)
+  [![ChromaDB](https://img.shields.io/badge/Vector%20DB-ChromaDB-FC6D26?style=flat-square)](https://www.trychroma.com/)
+  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
+  [![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+  [![GraphQL](https://img.shields.io/badge/GraphQL-BFF-E10098?style=flat-square&logo=graphql)](https://graphql.org/)
+  [![gRPC](https://img.shields.io/badge/gRPC-internal-4285F4?style=flat-square)](https://grpc.io/)
+  [![Kafka](https://img.shields.io/badge/Kafka-events-231F20?style=flat-square&logo=apachekafka)](https://kafka.apache.org/)
+  [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker)](https://docker.com/)
+  [![Tests](https://img.shields.io/badge/tests-30%2B%20unit%20tests-2ea44f?style=flat-square)](.github/workflows)
+  [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+
+  <br>
+  <img src="screenshots/dashboard-overview.svg" alt="AtlasOps Dashboard" width="800"/>
+  <br>
+  <em>AtlasOps Operations Dashboard — unified view of orders, inventory, billing, and AI-powered insights</em>
+</div>
 
 ---
 
-## 🎯 The Problem
+## Overview
 
-> Large enterprises run order management, inventory, and billing on **different systems** — often a mix of modern microservices and legacy platforms (Oracle + SOAP is extremely common in retail, telecom, banking, and insurance). When something goes wrong with an order, a support/ops engineer has to manually check **3-4 different systems**, each with a different API style, plus search internal runbooks and FAQs to figure out what to do.
+AtlasOps is an enterprise-grade operations platform that sits on top of **order management, inventory, billing, and legacy systems**, providing:
 
-## 🚀 The Solution
-
-**IntelliOps** is an AI co-pilot that sits on top of this landscape. A support engineer asks a question in **plain English** ("Why is order #4521 stuck, and has the customer been billed?"), and an AI agent retrieves relevant troubleshooting docs (RAG), calls the right backend services via standardized tool interfaces (MCP), and returns a **synthesized answer** with a recommended next action — all running on a **locally-hosted LLM (Ollama)** so no enterprise data leaves the network.
+- **AI Co-Pilot** — Natural language querying of business systems using RAG + tool-calling agents
+- **Unified Dashboard** — Real-time visibility across orders, inventory, and billing
+- **Multi-API Architecture** — REST, GraphQL BFF, gRPC internal, SOAP legacy, SSE streaming
+- **Event-Driven** — Kafka-powered async communication between services
+- **Privacy-First AI** — Local LLM (Ollama) + ChromaDB vector store — no data leaves your network
+- **100% Free & Open Source** — Zero paid dependencies, zero API keys required
 
 ---
 
 ## 📸 Screenshots
 
 ### 🔐 Authentication
+| Login | Register | Registration Success |
+|:-----:|:--------:|:--------------------:|
+| <img src="screenshots/login-page.svg" alt="Login" width="100%"/> | <img src="screenshots/register-page.svg" alt="Register" width="100%"/> | <img src="screenshots/register-success.svg" alt="Success" width="100%"/> |
 
-<table>
-  <tr>
-    <td width="50%" align="center"><img src="screenshots/login-page.svg" alt="Login Page" width="100%"/><br/><b>Login Page</b> — JWT-based authentication</td>
-    <td width="50%" align="center"><img src="screenshots/register-page.svg" alt="Register Page" width="100%"/><br/><b>Registration</b> — User sign-up with validation</td>
-  </tr>
-  <tr>
-    <td width="50%" align="center"><img src="screenshots/register-success.svg" alt="Registration Success" width="100%"/><br/><b>Registration Success</b> — Account created confirmation</td>
-    <td width="50%" align="center"></td>
-  </tr>
-</table>
-
-### 📊 Operations Dashboard
-
-<table>
-  <tr>
-    <td align="center"><img src="screenshots/dashboard-overview.svg" alt="Dashboard" width="100%"/><br/><b>Operations Dashboard</b> — Stats, order list, inventory, billing, AI insights</td>
-  </tr>
-</table>
+### 📊 Operations
+| Dashboard | AI Co-Pilot Chat | System Health |
+|:---------:|:----------------:|:-------------:|
+| <img src="screenshots/dashboard-overview.svg" alt="Dashboard" width="100%"/> | <img src="screenshots/ai-copilot.svg" alt="AI Chat" width="100%"/> | <img src="screenshots/system-health.svg" alt="Health" width="100%"/> |
 
 ### 📋 Order Management
+| Order List | Order Detail | Create Order |
+|:----------:|:------------:|:------------:|
+| <img src="screenshots/order-list.svg" alt="Orders" width="100%"/> | <img src="screenshots/order-detail.svg" alt="Detail" width="100%"/> | <img src="screenshots/order-create.svg" alt="Create" width="100%"/> |
 
-<table>
-  <tr>
-    <td width="50%" align="center"><img src="screenshots/order-list.svg" alt="Order List" width="100%"/><br/><b>Order List</b> — Search, filter, status tracking</td>
-    <td width="50%" align="center"><img src="screenshots/order-detail.svg" alt="Order Detail" width="100%"/><br/><b>Order Detail</b> — Customer info, timeline, line items</td>
-  </tr>
-  <tr>
-    <td width="50%" align="center"><img src="screenshots/order-create.svg" alt="Create Order" width="100%"/><br/><b>Create Order</b> — Enterprise form with items, pricing & validation</td>
-    <td width="50%" align="center"></td>
-  </tr>
-</table>
-
-### 🤖 AI Co-Pilot & Legacy Integration
-
-<table>
-  <tr>
-    <td width="50%" align="center"><img src="screenshots/ai-copilot.svg" alt="AI Co-Pilot Chat" width="100%"/><br/><b>AI Co-Pilot</b> — RAG-powered chat with MCP tool calling</td>
-    <td width="50%" align="center"><img src="screenshots/legacy-billing.svg" alt="Legacy Billing" width="100%"/><br/><b>Legacy Billing</b> — Oracle + SOAP integration with Kafka events</td>
-  </tr>
-</table>
-
-### 🔧 System & Error Handling
-
-<table>
-  <tr>
-    <td width="50%" align="center"><img src="screenshots/system-health.svg" alt="System Health" width="100%"/><br/><b>System Health</b> — Real-time service monitoring dashboard</td>
-    <td width="50%" align="center"><img src="screenshots/not-found.svg" alt="404 Error" width="100%"/><br/><b>404 Error Page</b> — Enterprise-grade error handling</td>
-  </tr>
-</table>
+### 💰 Legacy & Billing
+| Legacy Billing | 404 Error |
+|:--------------:|:---------:|
+| <img src="screenshots/legacy-billing.svg" alt="Billing" width="100%"/> | <img src="screenshots/not-found.svg" alt="404" width="100%"/> |
 
 ### 🏗️ Architecture
-
-<table>
-  <tr>
-    <td align="center"><img src="screenshots/architecture-flow.svg" alt="Architecture" width="100%"/><br/><b>End-to-End Architecture</b> — Microservices, APIs, databases, AI pipeline</td>
-  </tr>
-</table>
+| End-to-End Architecture |
+|:----------------------:|
+| <img src="screenshots/architecture-flow.svg" alt="Architecture" width="100%"/> |
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-                        ┌─────────────────────────┐
-                        │   Angular 17 Frontend    │
-                        │  (Auth + Co-pilot chat   │
-                        │   + admin dashboards)    │
-                        └───────────┬──────────────┘
-                         JWT Auth  │ GraphQL (BFF) + REST + SSE/WebSocket
-                         (Bearer)  ▼
-        ┌─────────────────────────────────────────────────────┐
-        │              Auth Service (port 8080)                │
-        │   JWT Login/Register · Spring Security · bcrypt      │
-        └────────────────────────┬────────────────────────────┘
-                                 │
-        ┌─────────────────────────────────────────────────────┐
-        │              AI Co-Pilot Service (port 8083)         │
-        │   Spring AI + LangChain4j + Ollama (local LLM)       │
-        │   - RAG over runbooks/FAQs (pgvector)                │
-        │   - Agent w/ tool calling (MCP)                      │
-        │   - Conversation memory (MongoDB)                    │
-        │   - SSE streaming responses                          │
-        └───────┬───────────────┬───────────────┬──────────────┘
-                │ MCP            │ MCP           │ MCP
-                ▼                ▼               ▼
-     ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────────┐
-     │ Order Service     │ │ Inventory/Catalog │ │ Legacy Billing       │
-     │ (port 8081)       │ │ (port 8082)       │ │ Adapter (port 8084)  │
-     │ PostgreSQL        │ │ MongoDB           │ │ Oracle DB             │
-     │ REST + GraphQL    │ │ gRPC (internal)   │ │ SOAP (legacy contract)│
-     └────────┬──────────┘ └────────┬──────────┘ └───────────┬──────────┘
-              │ Kafka events                                 │
-              ▼                                               │
-     ┌──────────────────────┐                                 │
-     │ Notification/Activity│◄────────────────────────────────┘
-     │ Service (Kafka)      │
-     └──────────────────────┘
+                       ┌─────────────────────────┐
+                       │   Angular 17 Frontend    │
+                       │  (Auth + Co-pilot chat   │
+                       │   + admin dashboards)    │
+                       └───────────┬──────────────┘
+                        JWT Auth  │ GraphQL (BFF) + REST + SSE/WebSocket
+                        (Bearer)  ▼
+       ┌─────────────────────────────────────────────────────┐
+       │              Auth Service (port 8080)                │
+       │   JWT Login/Register · Spring Security · bcrypt      │
+       └────────────────────────┬────────────────────────────┘
+                                │
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         AI Co-Pilot Service (port 8083)                       │
+│   LangChain4j 1.17 + Ollama (local LLM) + ChromaDB (vector store)           │
+│   - RAG over runbooks/FAQs with embedding similarity search                  │
+│   - Agent w/ MCP tool calling (Order, Inventory, Billing tools)             │
+│   - Conversation memory (MongoDB) + SSE streaming responses                 │
+│   - Fallback to pgvector or ChromaDB for vector storage                     │
+└───────┬───────────────┬───────────────┬──────────────┬──────────────┐
+        │ MCP            │ MCP           │ MCP          │ Vector Search│
+        ▼                ▼               ▼              ▼              │
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐  │
+│ Order Service│ │ Inventory    │ │ Legacy       │ │ ChromaDB     │  │
+│ (port 8081)  │ │ (port 8082)  │ │ Billing      │ │ Free Vector  │  │
+│ PostgreSQL   │ │ MongoDB      │ │ (port 8084)  │ │ DB (port 8000)│  │
+│ REST+GraphQL │ │ gRPC internal│ │ Oracle + SOAP│ │ Ollama       │  │
+└──────┬───────┘ └──────┬───────┘ └──────┬───────┘ │ Embeddings   │  │
+       │                │                │         └──────────────┘  │
+       └────────────────┴────────────────┘                          │
+                        │ Kafka events                              │
+                        ▼                                            │
+               ┌──────────────────────┐                              │
+               │ Notification/Activity│◄─────────────────────────────┘
+               │ Service (Kafka)      │
+               └──────────────────────┘
 ```
 
 ---
 
 ## ✨ Key Features
 
-### 🔐 Full Authentication Flow
-- **JWT-based authentication** with Spring Security
-- **User registration** with email/password validation
-- **Role-based access control** (USER, ADMIN, OPERATOR)
-- Secure password hashing with **bcrypt**
-- Token-based session management with auto-refresh
+### 🔐 Authentication
+- JWT-based auth with Spring Security + bcrypt
+- User registration, login, token refresh
+- Role-based access (USER, ADMIN, OPERATOR)
 
 ### 📊 Operations Dashboard
-- **Real-time stats** — Total orders, revenue, inventory, fulfillment rate
-- **Order list** with search, filter, and status badges
-- **Inventory overview** with stock level indicators and reorder alerts
-- **Billing summary** — invoices collected, pending, and overdue
-- **AI-powered insights** — automated recommendations and alerts
+- Real-time stats: orders, revenue, inventory, fulfillment rate
+- AI-powered insights and automated recommendations
+- System health monitoring for all microservices
 
-### 📋 Order Management (Phase 1)
-- **REST + GraphQL BFF** dual API surface
-- **PostgreSQL** with ACID transactions and Flyway migrations
-- **Kafka event publishing** for audit trail and notifications
-- **Enterprise order creation form** with line items, tax calculation, and validation
-- **Status workflow** — Pending → Confirmed → Processing → Shipped → Delivered
+### 📋 Order Management
+- REST + GraphQL BFF dual API surface
+- ACID transactions with PostgreSQL + Flyway migrations
+- Status workflow: Pending → Confirmed → Processing → Shipped → Delivered
+- Kafka event publishing for audit trails
 
-### 📦 Inventory & Catalog (Phase 2)
-- **MongoDB** document model for flexible product attributes
-- **gRPC** low-latency stock checking and reservation
-- **Product categories** with hierarchical relationships
-- **Real-time stock tracking** with reorder thresholds
+### 📦 Inventory & Catalog
+- MongoDB document model for flexible product attributes
+- gRPC low-latency stock checking and reservation
+- Real-time stock tracking with reorder thresholds
 
-### 🤖 AI Co-Pilot (Phase 3)
+### 🤖 AI Co-Pilot (RAG + MCP)
 - **Local LLM** via Ollama — no data leaves the network
-- **RAG** over enterprise runbooks and FAQs (pgvector)
+- **RAG** with ChromaDB vector store (free, open-source) + pgvector fallback
 - **MCP tool calling** — Order, Inventory, and Billing agents
-- **SSE streaming** for real-time chat responses
-- **Conversation memory** stored in MongoDB
+- SSE streaming for real-time chat responses
+- Conversation memory in MongoDB
 
-### 💰 Legacy Integration (Phase 4)
-- **Oracle DB** integration via H2 Oracle compatibility mode
-- **SOAP web services** for legacy billing system simulation
-- **Kafka event pipeline** for cross-system synchronization
-- **Invoice and payment management** with status tracking
+### 💰 Legacy Integration
+- Oracle DB + SOAP web services adapter
+- Kafka event pipeline for cross-system sync
+- Invoice/payment management with status tracking
 
-### 🎯 Agent Orchestration (Phase 5)
-- **Unified dashboard** with cross-service insights
-- **Automated AI recommendations** based on system state
-- **Inventory alerts** and restock notifications
-- **Billing status monitoring** and overdue tracking
-
-### 🔧 Enterprise Features
-- **System Health Dashboard** — Real-time monitoring of all 9 microservices
-- **Toast Notification System** — Success/error feedback with auto-dismiss
-- **404 Error Page** — Professional error handling with navigation options
-- **Order Creation Form** — Multi-line item orders with tax calculation
-- **Live Status Indicators** — Service health at a glance
-
-### ☁️ Cloud Deployment (Phase 6)
-- **Docker multi-stage builds** for minimal image sizes
-- **AWS ECS Fargate** with auto-scaling
-- **RDS PostgreSQL** with Multi-AZ and backups
-- **MSK Kafka** for event streaming
-- **CloudFront CDN** for static asset delivery
-- **Full CI/CD pipeline** with GitHub Actions
+### 🧪 Testing
+- **30+ unit tests** across all 5 backend services
+- JUnit 5 + Mockito + AssertJ
+- Spring Boot `@WebMvcTest` for controllers
+- Testcontainers for MongoDB & ChromaDB integration
 
 ---
 
 ## 🛠️ Tech Stack
 
-<table>
-  <tr>
-    <th>Layer</th>
-    <th>Technology</th>
-  </tr>
-  <tr>
-    <td><b>Backend</b></td>
-    <td>Java 17, Spring Boot 3.2, Spring Data JPA, Spring Security</td>
-  </tr>
-  <tr>
-    <td><b>Auth</b></td>
-    <td>JWT (jjwt), bcrypt, Spring Security filter chain</td>
-  </tr>
-  <tr>
-    <td><b>API (External)</b></td>
-    <td>REST (versionable, cacheable)</td>
-  </tr>
-  <tr>
-    <td><b>API (BFF)</b></td>
-    <td>GraphQL (single-round-trip queries)</td>
-  </tr>
-  <tr>
-    <td><b>API (Internal)</b></td>
-    <td>gRPC (low-latency service-to-service)</td>
-  </tr>
-  <tr>
-    <td><b>Legacy API</b></td>
-    <td>SOAP (Oracle adapter simulation)</td>
-  </tr>
-  <tr>
-    <td><b>Database (Auth)</b></td>
-    <td>PostgreSQL 16</td>
-  </tr>
-  <tr>
-    <td><b>Database (Orders)</b></td>
-    <td>PostgreSQL 16 (ACID, relational)</td>
-  </tr>
-  <tr>
-    <td><b>Database (Catalog)</b></td>
-    <td>MongoDB 7 (flexible schema)</td>
-  </tr>
-  <tr>
-    <td><b>Database (Legacy)</b></td>
-    <td>Oracle XE (simulated legacy)</td>
-  </tr>
-  <tr>
-    <td><b>Cache</b></td>
-    <td>Redis 7</td>
-  </tr>
-  <tr>
-    <td><b>Messaging</b></td>
-    <td>Apache Kafka / Redpanda</td>
-  </tr>
-  <tr>
-    <td><b>AI</b></td>
-    <td>Ollama (llama3.1), LangChain4j, pgvector</td>
-  </tr>
-  <tr>
-    <td><b>Frontend</b></td>
-    <td>Angular 17, Apollo GraphQL, SSE streaming</td>
-  </tr>
-  <tr>
-    <td><b>Infra</b></td>
-    <td>Docker Compose, AWS (ECS, RDS, MSK)</td>
-  </tr>
-  <tr>
-    <td><b>CI/CD</b></td>
-    <td>GitHub Actions</td>
-  </tr>
-</table>
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | Java 17, Spring Boot 3.2, Spring Data JPA, Spring Security |
+| **Auth** | JWT (jjwt 0.12), bcrypt, Spring Security filter chain |
+| **API (External)** | REST (versionable, cacheable) |
+| **API (BFF)** | GraphQL (single-round-trip queries) |
+| **API (Internal)** | gRPC (low-latency service-to-service) |
+| **Legacy API** | SOAP (Oracle adapter simulation) |
+| **Database (Auth/Orders)** | PostgreSQL 16 (ACID, relational) |
+| **Database (Catalog)** | MongoDB 7 (flexible schema) |
+| **Database (Legacy)** | Oracle XE (simulated legacy) |
+| **Vector Database** | ChromaDB (open-source, free) + pgvector |
+| **Cache** | Redis 7 |
+| **Messaging** | Apache Kafka |
+| **AI Framework** | LangChain4j 1.17.0 |
+| **AI Model** | Ollama (llama3.1 / nomic-embed-text) |
+| **Frontend** | Angular 17, Apollo GraphQL, SSE streaming |
+| **Infra** | Docker Compose, AWS (ECS, RDS, MSK) |
+| **Testing** | JUnit 5, Mockito, AssertJ, Testcontainers |
+| **CI/CD** | GitHub Actions |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
-
 | Tool | Version | Purpose |
 |------|---------|---------|
 | Java | 17+ | Backend microservices |
 | Maven | 3.9+ | Build & dependency management |
 | Node.js | 20+ | Angular frontend |
-| Docker | Latest | PostgreSQL, MongoDB, Kafka, Oracle |
+| Docker | Latest | PostgreSQL, MongoDB, Kafka, ChromaDB |
 | Ollama | Latest | Local LLM for AI features |
 
-### Quick Start
-
+### Setup
 ```bash
-# 1. Clone the repository
-git clone https://github.com/Anilg1997/IntelliOps-AI-Powered-Enterprise-Operations-Co-Pilot.git
-cd IntelliOps-AI-Powered-Enterprise-Operations-Co-Pilot
+# 1. Clone
+git clone https://github.com/Anilg1997/AtlasOps-AI-Enterprise-Platform.git
+cd AtlasOps-AI-Enterprise-Platform
 
 # 2. Build all services
 mvn clean install -DskipTests
 
-# 3. Start infrastructure (PostgreSQL, Kafka, MongoDB, Oracle)
+# 3. Start infrastructure
 docker-compose up -d
 
 # 4. Start Auth Service (terminal 1)
-cd backend/auth-service
-mvn spring-boot:run
+cd backend/auth-service && mvn spring-boot:run
 
 # 5. Start Order Service (terminal 2)
-cd backend/order-service
-mvn spring-boot:run
+cd backend/order-service && mvn spring-boot:run
 
 # 6. Start Frontend (terminal 3)
-cd frontend/intellops-ui
-npm install
-ng serve
-# Open http://localhost:4200
+cd frontend/intellops-ui && npm install && ng serve
+
+# 7. (Optional) Pull AI models
+ollama pull llama3.1
+ollama pull nomic-embed-text
 ```
 
-### API Endpoints
-
-#### 🔐 Auth Service (port 8080)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/auth/register` | Register a new user |
-| `POST` | `/api/auth/login` | Login and get JWT token |
-| `GET` | `/api/auth/me` | Get current user profile |
-
-#### 📋 Order Service (port 8081)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/actuator/health` | Health check |
-| `POST` | `/api/v1/customers` | Create customer |
-| `GET` | `/api/v1/customers` | List customers |
-| `POST` | `/api/v1/products` | Create product |
-| `GET` | `/api/v1/products` | List products |
-| `POST` | `/api/v1/orders` | Create order |
-| `GET` | `/api/v1/orders/{orderNumber}` | Get order by number |
-| `PATCH` | `/api/v1/orders/{orderNumber}/status` | Update order status |
-| `GET` | `/api/graphiql` | GraphQL playground |
-
-### GraphQL Example
-
-```graphql
-query GetOrderWithDetails {
-  order(orderNumber: "ORD-20241225-ABC123") {
-    orderNumber
-    status
-    totalAmount
-    customer { name email }
-    lineItems {
-      quantity
-      subtotal
-      product { name sku price }
-    }
-  }
-}
-```
+Open [http://localhost:4200](http://localhost:4200)
 
 ---
 
 ## 📦 Project Structure
 
 ```
-intellops-platform/
+atlasops-platform/
 ├── backend/
-│   ├── auth-service/              # User auth & JWT (registration, login)
-│   ├── order-service/             # Order & Customer management (Phase 1)
-│   │   ├── src/main/java/com/intellops/order/
-│   │   │   ├── config/           # CORS, GraphQL, Kafka config
-│   │   │   ├── controller/       # REST controllers
-│   │   │   ├── dto/              # Request/Response DTOs
-│   │   │   ├── entity/           # JPA entities (Customer, Product, Order)
-│   │   │   ├── exception/        # Global exception handler
-│   │   │   ├── graphql/          # GraphQL query controllers
-│   │   │   ├── grpc/             # gRPC client for Inventory
-│   │   │   ├── repository/       # Spring Data JPA repositories
-│   │   │   └── service/          # Business logic
-│   │   └── src/main/resources/
-│   │       ├── db/migration/     # Flyway migrations
-│   │       └── graphql/          # GraphQL schema
-│   ├── inventory-service/         # Inventory & Catalog (MongoDB + gRPC) (Phase 2)
-│   ├── ai-copilot-service/        # AI Co-Pilot with Ollama + RAG (Phase 3)
-│   ├── billing-service/           # Legacy Billing adapter (Oracle + SOAP) (Phase 4)
+│   ├── auth-service/              # JWT auth (registration, login)
+│   ├── order-service/             # Orders, customers (REST + GraphQL)
+│   ├── inventory-service/         # Catalog, stock (MongoDB + gRPC)
+│   ├── ai-copilot-service/        # AI co-pilot (LangChain4j, RAG, MCP)
+│   ├── billing-service/           # Legacy billing (Oracle + SOAP)
 │   └── proto/                     # Shared protobuf definitions
-├── frontend/
-│   └── intellops-ui/             # Angular 17 SPA
-│       ├── src/app/components/
-│       │   ├── auth/             # Login & Register pages
-│       │   ├── dashboard/        # Phase 5: Operations Dashboard
-│       │   ├── layout/           # Navbar with auth-aware navigation
-│       │   ├── order-list/       # Order list with stats
-│       │   ├── order-detail/     # Single order view
-│       │   └── chat/             # AI Co-Pilot chat interface
-│       ├── src/app/services/     # Auth, Order, Copilot services
-│       ├── src/app/guards/       # Auth guard for route protection
-│       └── src/app/interceptors/ # JWT token interceptor
-├── screenshots/                  # Application screenshots
-├── docs/
-│   ├── architecture.md           # Architecture docs & sequence diagrams
-│   └── tech-decisions.md         # Technology decision log
-├── .github/workflows/            # CI/CD pipelines
-├── docker-compose.yml            # Full local dev environment
-└── README.md                     # This file
+├── frontend/intellops-ui/         # Angular 17 SPA
+│   └── src/app/
+│       ├── components/            # Auth, dashboard, orders, chat, billing
+│       ├── services/              # REST + GraphQL clients
+│       ├── guards/                # Auth guards
+│       └── interceptors/          # JWT interceptor
+├── screenshots/                   # Application screenshots
+├── docs/                          # Architecture & decision docs
+├── .github/workflows/             # CI/CD pipelines
+├── docker-compose.yml             # Full local dev environment
+└── README.md                      # This file
 ```
 
 ---
 
-## 📋 Build Phases
+## 🧪 Running Tests
 
-| Phase | Status | Description | Key Technologies |
-|-------|--------|-------------|------------------|
-| **Auth** | ✅ Complete | User registration & login with JWT | Spring Security, JWT, bcrypt |
-| **Phase 1** | ✅ Complete | Order Service — REST + GraphQL + PostgreSQL + Kafka | Spring Boot, GraphQL, Kafka |
-| **Phase 2** | ✅ Complete | Inventory Service — MongoDB + gRPC product catalog | MongoDB, gRPC, Protobuf |
-| **Phase 3** | ✅ Complete | AI Co-Pilot — LangChain4j + Ollama + RAG + MCP tools | LangChain4j, Ollama, pgvector |
-| **Phase 4** | ✅ Complete | Legacy Billing — Oracle + SOAP + Kafka event pipeline | Oracle, SOAP, Spring-WS |
-| **Phase 5** | ✅ Complete | Agent orchestration, conversation memory, dashboards | Angular Dashboard, AI insights |
-| **Phase 6** | ✅ Complete | Dockerization, AWS deploy guide, enterprise features | AWS ECS, RDS, MSK, Docker |
+```bash
+# Test all backend services
+cd backend && mvn test
+
+# Test specific service
+cd backend/ai-copilot-service && mvn test
+
+# Test with coverage
+cd backend && mvn verify
+```
+
+### Test Coverage by Service
+
+| Service | Test Files | Coverage Areas |
+|---------|-----------|----------------|
+| **AI Co-Pilot** | 5 tests | ChatService, RagService, ConversationMemory, ChatController, AI Config |
+| **Auth** | 3 tests | AuthService, JwtTokenProvider, AuthController |
+| **Order** | 1 test | OrderService |
+| **Inventory** | 2 tests | InventoryService, ProductCatalogController |
+| **Billing** | 1 test | BillingService |
 
 ---
 
-## 🧠 Why This Project Stands Out (For Interviews)
+## 🔑 API Endpoints
 
-**IntelliOps** demonstrates enterprise-grade skills that go far beyond simple CRUD apps:
+### Auth Service (port 8080)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/register` | Register new user |
+| `POST` | `/api/auth/login` | Login & get JWT |
+| `GET` | `/api/auth/me` | Current user profile |
 
-1. **Multi-service microservices architecture** — 5 independent Spring Boot services with different databases and API styles
-2. **AI integration with local LLM** — RAG, tool calling, conversation memory using Ollama (privacy-first)
-3. **Legacy system integration** — Oracle + SOAP adapter pattern (real-world enterprise skill)
-4. **Event-driven architecture** — Kafka for decoupling services and creating audit trails
-5. **Multiple API paradigms** — REST, GraphQL (BFF), gRPC (internal), SOAP (legacy), SSE (streaming)
-6. **Full authentication** — JWT with Spring Security, bcrypt, role-based access
-7. **Modern frontend** — Angular 17 standalone components, Apollo GraphQL, reactive forms, auth guards
-8. **Cloud-ready** — Docker Compose, CI/CD with GitHub Actions, AWS deployment ready (Phase 6)
-9. **Enterprise UX** — Order creation forms, toast notifications, system health monitoring, 404 error pages, responsive design
-10. **12 end-to-end screenshots** — Complete visual documentation of every page and flow
+### AI Co-Pilot (port 8083)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/copilot/session` | Create chat session |
+| `POST` | `/api/copilot/chat` | Send message |
+| `GET` | `/api/copilot/chat/stream` | SSE streaming chat |
+| `GET` | `/api/copilot/history/{id}` | Chat history |
+| `DELETE` | `/api/copilot/session/{id}` | Clear session |
+
+---
+
+## 🧠 Why AtlasOps Stands Out
+
+1. **Multi-service microservices** — 5 independent Spring Boot services with different databases and API styles
+2. **AI with local LLM** — RAG, MCP tool calling, conversation memory (privacy-first)
+3. **Free vector database** — ChromaDB integration for production-grade RAG without paid services
+4. **Latest LangChain4j** — Uses LangChain4j 1.17.0 with the most recent AI capabilities
+5. **Legacy integration** — Oracle + SOAP adapter (real enterprise skill)
+6. **Event-driven** — Kafka for decoupling and audit trails
+7. **Multi-API** — REST, GraphQL, gRPC, SOAP, SSE — all in one platform
+8. **Full auth** — JWT, bcrypt, role-based access
+9. **Modern frontend** — Angular 17, reactive forms, SSE streaming
+10. **Comprehensive tests** — 30+ unit tests across all services
+11. **Cloud-ready** — Docker Compose, CI/CD, AWS deploy guides
+12. **Enterprise UX** — Order forms, toast notifications, system health monitoring, responsive design
+
+---
+
+<div align="center">
+  <br>
+  <p>
+    <strong>Built with ❤️ by <a href="https://github.com/Anilg1997">Anil G</a></strong>
+  </p>
+  <p>
+    <a href="https://github.com/Anilg1997">GitHub</a> ·
+    <a href="https://linkedin.com/in/anilg1997">LinkedIn</a>
+  </p>
+  <p>
+    <sub>MIT License · Copyright © 2026 Anil G</sub>
+  </p>
+</div>

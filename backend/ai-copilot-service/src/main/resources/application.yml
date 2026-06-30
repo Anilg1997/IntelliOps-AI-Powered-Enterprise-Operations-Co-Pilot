@@ -36,8 +36,13 @@ intellops:
       billing-service-url: http://localhost:8084
     rag:
       enabled: true
+      store: pgvector
       chunk-size: 500
       chunk-overlap: 50
+      chroma:
+        base-url: http://localhost:8000
+        collection: atlasops_embeddings
+      embedding-model: nomic-embed-text
 
 management:
   endpoints:
