@@ -48,7 +48,7 @@ public class ChatService {
         conversationMemory.addMessage(sessionId, "user", userMessage);
 
         // 2. Retrieve relevant RAG context
-        String ragContext = ragService.retrieveContext(userMessage);
+        String ragContext = ragService.retrieveRelevantContext(userMessage);
 
         // 3. Build enriched prompt with context and conversation history
         String conversationHistory = conversationMemory.buildConversationContext(sessionId, 8);

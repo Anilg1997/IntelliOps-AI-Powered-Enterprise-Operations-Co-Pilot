@@ -20,6 +20,15 @@ public class RagService {
     @Value("${intellops.ai.rag.enabled:true}")
     private boolean ragEnabled;
 
+    public void indexDocument(String title, String content, String source) {
+        DocumentChunk chunk = DocumentChunk.builder()
+                .documentName(title)
+                .chunkText(title + "\n" + content)
+                .metadata("{\"source\":\"" + source + "\",\"title\":\"" + title + "\"}")
+                .build();
+        documentChunkRepository.save(chunk);
+    }
+
     public String retrieveRelevantContext(String query) {
         if (!ragEnabled) {
             return getDefaultContext();

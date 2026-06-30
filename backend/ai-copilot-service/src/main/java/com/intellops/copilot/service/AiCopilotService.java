@@ -5,8 +5,10 @@ import com.intellops.copilot.mongo.ConversationRepository;
 import com.intellops.copilot.tools.BillingTool;
 import com.intellops.copilot.tools.InventoryTool;
 import com.intellops.copilot.tools.OrderTool;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.ollama.OllamaStreamingChatModel;
 import dev.langchain4j.service.AiServices;
@@ -41,8 +43,8 @@ public class AiCopilotService {
     @Value("${intellops.ai.ollama.temperature:0.7}")
     private double temperature;
 
-    private ChatLanguageModel chatModel;
-    private StreamingChatLanguageModel streamingChatModel;
+    private ChatModel chatModel;
+    private StreamingChatModel streamingChatModel;
 
     public AiCopilotService(OrderTool orderTool, InventoryTool inventoryTool,
                              BillingTool billingTool, RagService ragService,
@@ -106,7 +108,7 @@ public class AiCopilotService {
 
             if (chatModel != null) {
                 CopilotAssistant assistant = AiServices.builder(CopilotAssistant.class)
-                        .chatLanguageModel(chatModel)
+                        .chatModel(chatModel)
                         .tools(orderTool, inventoryTool, billingTool)
                         .build();
 
@@ -135,20 +137,22 @@ public class AiCopilotService {
             if (streamingChatModel != null) {
                 Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
 
-                streamingChatModel.generate(fullPrompt, new dev.langchain4j.model.chat.listener.ChatResponseListener() {
+                streamingChatModel.chat(fullPrompt, new StreamingChatResponseHandler() {
                     @Override
-                    public void onPartialResponse(String partialResponse,
-                                                   dev.langchain4j.data.message.AiMessage aiMessage,
-                                                   dev.langchain4j.model.chat.listener.ChatResponseMetadata chatResponseMetadata) {
+                    public void onPartialResponse(String partialResponse) {
                         sink.tryEmitNext(partialResponse);
                     }
 
                     @Override
-                    public void onCompleteResponse(dev.langchain4j.data.message.AiMessage aiMessage,
-                                                    dev.langchain4j.model.chat.listener.ChatResponseMetadata chatResponseMetadata) {
+                    public void onCompleteResponse(ChatResponse chatResponse) {
                         sink.tryEmitComplete();
                         saveMessage(conversationId, "user", message);
-                        saveMessage(conversationId, "assistant", aiMessage.text());
+                        saveMessage(conversationId, "assistant", chatResponse.aiMessage().text());
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        sink.tryEmitError(error);
                     }
                 });
 

@@ -21,8 +21,8 @@ class JwtTokenProviderTest {
         ReflectionTestUtils.setField(tokenProvider, "jwtSecret",
                 "test-secret-key-which-is-at-least-256-bits-long-for-hs256-algorithm");
         ReflectionTestUtils.setField(tokenProvider, "jwtExpiration", 3600000L);
-        ReflectionTestUtils.setField(tokenProvider, "refreshTokenExpiration", 86400000L);
-        tokenProvider.init();
+        ReflectionTestUtils.setField(tokenProvider, "refreshExpiration", 86400000L);
+        ReflectionTestUtils.setField(tokenProvider, "issuer", "test");
     }
 
     @Test

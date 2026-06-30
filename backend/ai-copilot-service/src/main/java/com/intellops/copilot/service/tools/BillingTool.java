@@ -211,6 +211,6 @@ public class BillingTool {
 
     private String getNumber(JsonNode node, String field) {
         JsonNode value = node.get(field);
-        return value != null && !value.isNull() ? value.toPlainString() : "0";
+        return value != null && !value.isNull() ? value.asText() : "0";
     }
 }

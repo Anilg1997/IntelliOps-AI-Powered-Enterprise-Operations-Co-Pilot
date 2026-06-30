@@ -4,7 +4,7 @@ import com.intellops.copilot.service.tools.BillingTool;
 import com.intellops.copilot.service.tools.InventoryTool;
 import com.intellops.copilot.service.tools.OrderTool;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +37,7 @@ public class AiConfig {
      * Uses llama3.1 (or configured model) which supports tool calling natively.
      */
     @Bean
-    public ChatLanguageModel chatLanguageModel() {
+    public ChatModel chatModel() {
         return OllamaChatModel.builder()
                 .baseUrl(ollamaBaseUrl)
                 .modelName(ollamaModel)
@@ -51,12 +51,12 @@ public class AiConfig {
      * the LLM with registered tools (@Tool beans) and conversation memory.
      */
     @Bean
-    public Assistant assistant(ChatLanguageModel chatModel,
+    public Assistant assistant(ChatModel chatModel,
                                OrderTool orderTool,
                                InventoryTool inventoryTool,
                                BillingTool billingTool) {
         return AiServices.builder(Assistant.class)
-                .chatLanguageModel(chatModel)
+                .chatModel(chatModel)
                 .tools(orderTool, inventoryTool, billingTool)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(20))
                 .build();

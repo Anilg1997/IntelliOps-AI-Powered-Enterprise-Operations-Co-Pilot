@@ -1,10 +1,14 @@
 package com.intellops.copilot.config;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import com.intellops.copilot.service.tools.BillingTool;
+import com.intellops.copilot.service.tools.InventoryTool;
+import com.intellops.copilot.service.tools.OrderTool;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,11 +22,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 class AiConfigTest {
 
+    @MockBean
+    private OrderTool orderTool;
+    @MockBean
+    private InventoryTool inventoryTool;
+    @MockBean
+    private BillingTool billingTool;
+
     @Autowired
-    private ChatLanguageModel chatLanguageModel;
+    private ChatModel chatModel;
 
     @Test
-    void chatLanguageModel_shouldBeOllamaChatModel() {
-        assertThat(chatLanguageModel).isInstanceOf(OllamaChatModel.class);
+    void chatModel_shouldBeOllamaChatModel() {
+        assertThat(chatModel).isInstanceOf(OllamaChatModel.class);
     }
 }

@@ -50,7 +50,7 @@ class ChatServiceTest {
         String conversationHistory = "--- Conversation History ---\nUser: Hi\nAssistant: Hello\n--- End ---";
         String aiResponse = "Order 123 is in PROCESSING status.";
 
-        when(ragService.retrieveContext(userMessage)).thenReturn(ragContext);
+        when(ragService.retrieveRelevantContext(userMessage)).thenReturn(ragContext);
         when(conversationMemory.buildConversationContext(sessionId, 8)).thenReturn(conversationHistory);
         when(assistant.chat(anyString())).thenReturn(aiResponse);
 
@@ -63,7 +63,7 @@ class ChatServiceTest {
 
     @Test
     void processMessage_whenAssistantThrows_shouldReturnErrorResponse() {
-        when(ragService.retrieveContext(anyString())).thenReturn("context");
+        when(ragService.retrieveRelevantContext(anyString())).thenReturn("context");
         when(conversationMemory.buildConversationContext(anyString(), anyInt())).thenReturn("history");
         when(assistant.chat(anyString())).thenThrow(new RuntimeException("Ollama not running"));
 
